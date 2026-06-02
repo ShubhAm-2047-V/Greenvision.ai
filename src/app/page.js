@@ -40,8 +40,8 @@ export default function LandingPage() {
   return (
     <div>
       {/* ══ HERO ══ */}
-      <section style={{ minHeight: '88vh', display: 'flex', alignItems: 'center', padding: '40px 16px', gap: '40px', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <section style={{ minHeight: '88vh', display: 'flex', alignItems: 'center', padding: '20px 16px', gap: '32px', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div className="sk-card" style={{ padding: '8px 16px', display: 'inline-flex', width: 'fit-content', borderRadius: '50px', fontSize: '14px', fontWeight: 'bold' }}>
             🌾 Precision Agriculture Platform — Powered by Gemini AI
           </div>
@@ -66,7 +66,7 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Visual Card */}
-        <div style={{ flex: '1 1 340px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ flex: '1 1 280px', display: 'flex', justifyContent: 'center' }}>
           <div className="sk-card" style={{ width: '100%', maxWidth: '480px', position: 'relative', background: 'var(--grad-convex)' }}>
             <div style={{ fontSize: '4rem', marginBottom: '16px', filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.2))' }}>🌾</div>
             <div style={{ fontSize: '12px', color: 'var(--primary-dark)', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '2px' }}>

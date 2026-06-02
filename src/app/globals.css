@@ -134,3 +134,11 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 768px) { .desktop-only { display: none !important; } }
 @media (min-width: 769px) { .mobile-only { display: none !important; } }
+
+@media (max-width: 768px) {
+  .sk-card { padding: 16px !important; border-radius: 16px !important; }
+  .sk-button { padding: 10px 16px !important; font-size: 14px !important; }
+  .sk-nav { flex-wrap: wrap; gap: 12px; margin: 8px !important; padding: 12px !important; }
+  h1 { font-size: 2rem !important; }
+  h2 { font-size: 1.5rem !important; }
+}

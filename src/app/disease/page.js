@@ -63,7 +63,7 @@ const DiseasePage = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'flex-start' }}>
         
         {/* Upload Form */}
-        <div className="sk-card" style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="sk-card" style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
             <Icon name="camera" style={{ color: 'var(--primary)' }} /> Image Upload
           </h3>
@@ -122,7 +122,7 @@ const DiseasePage = () => {
         </div>
 
         {/* Diagnostic Results Display */}
-        <div style={{ flex: '2 1 400px' }}>
+        <div style={{ flex: '2 1 280px' }}>
           {result ? (
             <div className="sk-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--grad-convex)' }}>
               <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '4px 12px', borderRadius: '50px', fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', alignSelf: 'flex-start' }}>

@@ -168,7 +168,7 @@ const AdvisorPage = () => {
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
         <div>
           <h1 style={{ margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)' }}>
             <Icon name="message-square" style={{ color: 'var(--primary)' }} /> {t('chatbot')}

@@ -334,7 +334,7 @@ const PredictPage = () => {
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             <div className="sk-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div className="sk-card" style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: '#10b981' }}>
                 {result.farm_health_score || '85'}
