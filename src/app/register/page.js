@@ -31,19 +31,12 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      // Step 1: Register via backend (auto-confirms email — no verification needed)
       await registerViaBackend(email, password, name, role);
-
-      // Step 2: Immediately sign in (works because email is pre-confirmed)
       await signIn(email, password);
-
       setSuccess('Account created! Redirecting to dashboard...');
       setTimeout(() => router.push('/dashboard'), 1200);
     } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        'Registration failed. Please try again.';
+      const msg = err?.response?.data?.message || err?.message || 'Registration failed. Please try again.';
       setError(msg);
     } finally {
       setLoading(false);
@@ -51,105 +44,91 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh] text-left">
-      <div className="glass w-full max-w-md p-8 rounded-3xl border border-slate-200/50 dark:border-slate-800/50 shadow-2xl">
-        {/* Logo */}
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center">
-            <Icon name="sprout" className="w-5 h-5 text-white" />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', padding: '20px' }}>
+      <div className="sk-card" style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '40px', height: '40px', background: 'var(--primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: 'var(--shadow-out)' }}>
+            <Icon name="sprout" />
           </div>
-          <span className="font-bold text-slate-800 dark:text-white">AgroMind AI</span>
+          <span style={{ fontWeight: 'bold', fontSize: '18px', color: 'var(--primary-dark)' }}>AgroMind AI</span>
         </div>
 
-        <h2 className="text-2xl font-bold mb-1 text-slate-800 dark:text-white">Create Account</h2>
-        <p className="text-xs text-slate-400 mb-6">Join the Precision Agronomy platform — no email verification required</p>
+        <div>
+          <h2 style={{ margin: '0 0 4px', color: 'var(--primary-dark)' }}>Create Account</h2>
+          <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Join the Precision Agronomy platform</p>
+        </div>
 
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs rounded-xl mb-4 flex items-center gap-2">
-            <Icon name="x" className="w-4 h-4 flex-shrink-0" />
-            {error}
+          <div style={{ padding: '12px', background: '#ffe4e6', color: '#e11d48', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon name="x" style={{ width: '16px', height: '16px' }} /> {error}
           </div>
         )}
 
         {success && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs rounded-xl mb-4 flex items-center gap-2">
-            <Icon name="check-circle" className="w-4 h-4 flex-shrink-0" />
-            {success}
+          <div style={{ padding: '12px', background: '#dcfce7', color: '#15803d', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon name="check-circle" style={{ width: '16px', height: '16px' }} /> {success}
           </div>
         )}
 
-        <form onSubmit={handleRegister} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Full Name</label>
+        <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>Full Name</label>
             <input
               required
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g. Ramesh Vernekar"
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500"
+              className="sk-card"
+              style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '12px 16px', border: 'none', outline: 'none' }}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Email Address</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>Email Address</label>
             <input
               required
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="farmer@example.com"
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500"
+              className="sk-card"
+              style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '12px 16px', border: 'none', outline: 'none' }}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Register As</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>Register As</label>
             <select
               value={role}
               onChange={e => setRole(e.target.value)}
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500"
+              className="sk-card"
+              style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '12px 16px', border: 'none', outline: 'none' }}
             >
               <option value="farmer">Farmer</option>
               <option value="admin">Administrator</option>
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Password</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>Password</label>
             <input
               required
               minLength={6}
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="Minimum 6 characters"
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500"
+              className="sk-card"
+              style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '12px 16px', border: 'none', outline: 'none' }}
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl border-0 cursor-pointer transition-all mt-2 flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <Icon name="refresh-cw" className="w-4 h-4 animate-spin" />
-                Creating Account...
-              </>
-            ) : (
-              <>
-                <Icon name="user" className="w-4 h-4" />
-                Create Account
-              </>
-            )}
+          <button type="submit" disabled={loading} className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px' }}>
+            {loading ? 'Creating...' : 'Create Account'}
           </button>
         </form>
 
-        <p className="text-xs text-center mt-6 text-slate-500">
+        <p style={{ fontSize: '12px', textAlign: 'center', margin: 0, color: 'var(--text-muted)' }}>
           Already have an account?{' '}
-          <Link href="/login" className="text-emerald-600 hover:underline font-bold">
+          <Link href="/login" style={{ color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none' }}>
             Sign In
           </Link>
         </p>

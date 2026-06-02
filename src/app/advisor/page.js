@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth, supabase } from '../../context/AuthContext';
 import { useTranslation } from '../../context/TranslationContext';
 import { chatbotMessage } from '../../services/api';
@@ -24,7 +23,6 @@ const AdvisorPage = () => {
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
 
-  // 1. Redirect if not authenticated
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
@@ -32,7 +30,6 @@ const AdvisorPage = () => {
     }
   }, [user, authLoading]);
 
-  // 2. Fetch Chat History on mount
   useEffect(() => {
     if (!user) return;
     const fetchChatHistory = async () => {
@@ -45,8 +42,6 @@ const AdvisorPage = () => {
 
         if (!error && data) {
           setMessages(data);
-        } else if (error) {
-          console.error("Error fetching chat logs:", error);
         }
       } catch (err) {
         console.error("Database connection exception:", err);
@@ -55,7 +50,6 @@ const AdvisorPage = () => {
     fetchChatHistory();
   }, [user]);
 
-  // 3. Initialize Speech Recognition
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -70,14 +64,8 @@ const AdvisorPage = () => {
         setIsSpeaking(false);
       };
 
-      rec.onend = () => {
-        setIsListening(false);
-      };
-
-      rec.onerror = (e) => {
-        console.error("Speech recognition error:", e);
-        setIsListening(false);
-      };
+      rec.onend = () => setIsListening(false);
+      rec.onerror = () => setIsListening(false);
 
       rec.onresult = (event) => {
         const text = event.results[0][0].transcript;
@@ -91,44 +79,29 @@ const AdvisorPage = () => {
     }
   }, [user]);
 
-  // 4. Auto scroll message box
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  // Stop TTS voice output
   const handleStopSpeech = () => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
     setIsSpeaking(false);
   };
 
-  // Speaks response text out loud in the correct language voice
   const speakText = (text) => {
     if (!window.speechSynthesis || !voiceEnabled) return;
-
     window.speechSynthesis.cancel();
-    
-    // Clean up text format (remove asterisks and markdown symbols)
     const cleanText = text.replace(/[\*\#\_\`\-\+]/g, '');
-
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    // Set appropriate language voice properties
-    if (locale === 'hi') {
-      utterance.lang = 'hi-IN';
-    } else if (locale === 'mr') {
-      utterance.lang = 'mr-IN';
-    } else {
-      utterance.lang = 'en-US';
-    }
+    if (locale === 'hi') utterance.lang = 'hi-IN';
+    else if (locale === 'mr') utterance.lang = 'mr-IN';
+    else utterance.lang = 'en-US';
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
 
-    // Try finding matching voice
     const voices = window.speechSynthesis.getVoices();
     const voice = voices.find(v => v.lang.startsWith(locale));
     if (voice) utterance.voice = voice;
@@ -136,7 +109,6 @@ const AdvisorPage = () => {
     window.speechSynthesis.speak(utterance);
   };
 
-  // 5. Send Message Handler
   const handleSend = async (e) => {
     e.preventDefault();
     if (!inputText.trim() || loading) return;
@@ -149,7 +121,6 @@ const AdvisorPage = () => {
     if (!text.trim() || loading) return;
     setLoading(true);
 
-    // Optimistically add user message to list
     const userMsg = { id: Math.random().toString(), sender: 'user', text, created_at: new Date().toISOString() };
     setMessages(prev => [...prev, userMsg]);
 
@@ -159,11 +130,8 @@ const AdvisorPage = () => {
 
       const botMsg = { id: Math.random().toString(), sender: 'bot', text: botResponse, created_at: new Date().toISOString() };
       setMessages(prev => [...prev, botMsg]);
-
-      // Speak response out loud
       speakText(botResponse);
     } catch (err) {
-      console.error(err);
       const errorMsg = { 
         id: Math.random().toString(), 
         sender: 'bot', 
@@ -176,97 +144,65 @@ const AdvisorPage = () => {
     }
   };
 
-  // Toggle voice speaking recording state
   const handleMicToggle = () => {
     if (!recognitionRef.current) return;
-    
     if (isListening) {
       recognitionRef.current.stop();
     } else {
-      // Set language according to translation context
-      if (locale === 'hi') {
-        recognitionRef.current.lang = 'hi-IN';
-      } else if (locale === 'mr') {
-        recognitionRef.current.lang = 'mr-IN';
-      } else {
-        recognitionRef.current.lang = 'en-US';
-      }
+      if (locale === 'hi') recognitionRef.current.lang = 'hi-IN';
+      else if (locale === 'mr') recognitionRef.current.lang = 'mr-IN';
+      else recognitionRef.current.lang = 'en-US';
       recognitionRef.current.start();
     }
   };
 
-  const prefillQuestions = [
-    t('q1'),
-    t('q2'),
-    t('q3'),
-    t('q4'),
-    t('q5')
-  ];
+  const prefillQuestions = [t('q1'), t('q2'), t('q3'), t('q4'), t('q5')];
 
   if (authLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
-        <Icon name="refresh-cw" className="w-12 h-12 text-primary animate-spin" />
-        <span className="text-sm text-slate-500">Connecting AI Advisor...</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', color: 'var(--text-muted)' }}>
+        Connecting AI Advisor...
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6 text-left max-w-4xl mx-auto h-[80vh] min-h-[500px]">
-      {/* Header Info */}
-      <div className="flex justify-between items-center border-b border-slate-200/50 dark:border-slate-800/50 pb-4">
+    <div style={{ maxWidth: '800px', margin: '0 auto', height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
-            <Icon name="message-square" className="text-primary w-8 h-8" /> {t('chatbot')}
+          <h1 style={{ margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)' }}>
+            <Icon name="message-square" style={{ color: 'var(--primary)' }} /> {t('chatbot')}
           </h1>
-          <p className="text-xs text-slate-500">Ask agronomic queries in English, Hindi, or Marathi.</p>
+          <p style={{ margin: 0, color: 'var(--text-muted)' }}>Ask agronomic queries in English, Hindi, or Marathi.</p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', gap: '8px' }}>
           {isSpeaking && (
-            <button 
-              onClick={handleStopSpeech} 
-              className="flex items-center gap-1.5 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 text-xs px-3 py-1.5 rounded-lg border border-rose-500/25 cursor-pointer transition-all"
-            >
-              <Icon name="x" className="w-3.5 h-3.5" /> Stop Speaking
+            <button onClick={handleStopSpeech} style={{ padding: '8px 12px', background: '#ffe4e6', color: '#e11d48', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+              <Icon name="x" style={{ width: '16px', height: '16px' }} /> Stop
             </button>
           )}
-          <button 
-            onClick={() => setVoiceEnabled(!voiceEnabled)} 
-            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border cursor-pointer transition-all ${voiceEnabled ? 'bg-primary/10 border-primary/20 text-primary' : 'bg-slate-200/20 border-slate-350 text-slate-400'}`}
-          >
-            <Icon name={voiceEnabled ? 'volume-2' : 'volume-x'} className="w-3.5 h-3.5" />
-            {voiceEnabled ? 'Voice Output ON' : 'Voice Output OFF'}
+          <button onClick={() => setVoiceEnabled(!voiceEnabled)} className="sk-button" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+            <Icon name={voiceEnabled ? 'volume-2' : 'volume-x'} style={{ width: '16px', height: '16px', color: voiceEnabled ? 'var(--primary)' : 'inherit' }} />
+            {voiceEnabled ? 'Voice ON' : 'Voice OFF'}
           </button>
         </div>
       </div>
 
-      {/* Main Chat Layout */}
-      <div className="flex-1 glass border border-slate-200/50 dark:border-slate-800/50 rounded-3xl overflow-hidden flex flex-col relative bg-white/40 dark:bg-slate-950/40 shadow-xl">
+      <div className="sk-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
         
-        {/* Messages Feed */}
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {messages.length === 0 && (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-12 max-w-md mx-auto my-auto gap-4">
-              <div className="bg-primary/10 p-4 rounded-full text-primary">
-                <Icon name="bot" className="w-10 h-10 stroke-1" />
+            <div style={{ textAlign: 'center', margin: 'auto', maxWidth: '400px' }}>
+              <div style={{ width: '64px', height: '64px', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--primary)' }}>
+                <Icon name="bot" style={{ width: '32px', height: '32px' }} />
               </div>
-              <div>
-                <h3 className="font-bold text-slate-700 dark:text-slate-300">Welcome to AgroMind Advisor</h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                  How can I help you today? You can select a quick question below, write your query, or click the microphone to speak.
-                </p>
-              </div>
-
-              {/* Prefill Questions Grid */}
-              <div className="flex flex-wrap gap-2 justify-center mt-2">
+              <h3 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>Welcome to AgroMind Advisor</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '24px' }}>How can I help you today? You can select a quick question below, write your query, or click the microphone to speak.</p>
+              
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
                 {prefillQuestions.map((q, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => sendMessageDirectly(q)}
-                    className="text-[10px] bg-slate-100 hover:bg-primary hover:text-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-2 rounded-xl transition-all text-slate-600 dark:text-slate-300 cursor-pointer font-semibold"
-                  >
+                  <button key={idx} onClick={() => sendMessageDirectly(q)} className="sk-button" style={{ fontSize: '12px', padding: '8px 12px' }}>
                     {q}
                   </button>
                 ))}
@@ -275,117 +211,47 @@ const AdvisorPage = () => {
           )}
 
           {messages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className={`flex gap-3 max-w-[80%] ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
-            >
-              {/* Avatar Icon */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.sender === 'user' ? 'bg-primary text-white' : 'bg-slate-800 text-white'}`}>
-                <Icon name={msg.sender === 'user' ? 'user' : 'bot'} className="w-4 h-4" />
+            <div key={msg.id} style={{ display: 'flex', gap: '12px', maxWidth: '80%', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: msg.sender === 'user' ? 'var(--primary)' : 'var(--bg-color)', boxShadow: msg.sender === 'bot' ? 'var(--shadow-in)' : 'none', color: msg.sender === 'user' ? 'white' : 'var(--primary)' }}>
+                <Icon name={msg.sender === 'user' ? 'user' : 'bot'} style={{ width: '16px', height: '16px' }} />
               </div>
               
-              {/* Message Bubble */}
-              <div className="flex flex-col gap-1">
-                <div className={`p-4 rounded-2xl text-xs leading-relaxed ${msg.sender === 'user' ? 'bg-primary text-white rounded-tr-none' : 'glass border border-slate-200/50 dark:border-slate-800/30 text-slate-800 dark:text-slate-300 rounded-tl-none bg-white dark:bg-slate-900'}`}>
-                  {/* Process simple markdown like bold text and bullets */}
-                  <span className="whitespace-pre-line">
-                    {msg.text.split('\n').map((line, lidx) => {
-                      // Process bullet lines
-                      if (line.trim().startsWith('*') || line.trim().startsWith('-')) {
-                        const content = line.replace(/^[\*\-]\s*/, '');
-                        return <li key={lidx} className="ml-4 list-disc">{content}</li>;
-                      }
-                      
-                      // Process bold text tags
-                      const parts = line.split(/(\*\*[^*]+\*\*)/g);
-                      return (
-                        <p key={lidx} className={lidx > 0 ? "mt-2" : ""}>
-                          {parts.map((part, pidx) => {
-                            if (part.startsWith('**') && part.endsWith('**')) {
-                              return <strong key={pidx}>{part.slice(2, -2)}</strong>;
-                            }
-                            return part;
-                          })}
-                        </p>
-                      );
-                    })}
-                  </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={{ 
+                  padding: '12px 16px', borderRadius: '16px', fontSize: '14px', lineHeight: 1.5,
+                  background: msg.sender === 'user' ? 'var(--grad-primary)' : 'var(--bg-color)',
+                  color: msg.sender === 'user' ? 'white' : 'inherit',
+                  boxShadow: msg.sender === 'user' ? 'none' : 'var(--shadow-in)',
+                  borderTopRightRadius: msg.sender === 'user' ? 0 : '16px',
+                  borderTopLeftRadius: msg.sender === 'bot' ? 0 : '16px'
+                }}>
+                  {msg.text}
                 </div>
-                
-                {/* Voice play trigger */}
                 {msg.sender === 'bot' && (
-                  <button 
-                    onClick={() => speakText(msg.text)} 
-                    className="self-start text-[10px] text-slate-400 hover:text-primary bg-transparent border-0 cursor-pointer flex items-center gap-1 mt-0.5"
-                  >
-                    <Icon name="volume-2" className="w-3 h-3" /> Speak Out Loud
+                  <button onClick={() => speakText(msg.text)} style={{ alignSelf: 'flex-start', fontSize: '10px', color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Icon name="volume-2" style={{ width: '12px', height: '12px' }} /> Speak
                   </button>
                 )}
               </div>
             </div>
           ))}
-
           {loading && (
-            <div className="flex gap-3 max-w-[80%] self-start">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-800 text-white flex-shrink-0">
-                <Icon name="bot" className="w-4 h-4" />
-              </div>
-              <div className="p-4 glass border border-slate-200/50 dark:border-slate-800/30 text-slate-400 rounded-2xl rounded-tl-none flex items-center gap-1.5 text-xs bg-white dark:bg-slate-900">
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></span>
-              </div>
-            </div>
+             <div style={{ alignSelf: 'flex-start', fontStyle: 'italic', color: 'var(--text-muted)', fontSize: '12px' }}>Advisor is thinking...</div>
           )}
-
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Listening soundwave animation overlay */}
-        <AnimatePresence>
-          {isListening && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-30 flex flex-col items-center justify-center text-center gap-6"
-            >
-              <div className="flex items-center gap-1.5 h-16">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                  <span 
-                    key={i} 
-                    className="w-1 bg-primary rounded-full animate-pulse" 
-                    style={{ 
-                      height: `${Math.random() * 50 + 20}px`,
-                      animationDuration: `${Math.random() * 0.5 + 0.5}s`,
-                      animationIterationCount: 'infinite'
-                    }}
-                  ></span>
-                ))}
-              </div>
-              <div>
-                <h3 className="font-bold text-white text-lg">Listening...</h3>
-                <p className="text-xs text-slate-400 mt-1">Speak clearly in {locale === 'hi' ? 'Hindi' : locale === 'mr' ? 'Marathi' : 'English'}</p>
-              </div>
-              <button 
-                onClick={handleMicToggle} 
-                className="bg-rose-500 text-white font-bold p-4 rounded-full border-0 cursor-pointer shadow-lg hover:scale-105 transition-all"
-              >
-                <Icon name="x" className="w-6 h-6" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {isListening && (
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+            <h3 style={{ color: 'var(--primary-dark)' }}>Listening...</h3>
+            <button onClick={handleMicToggle} className="sk-button" style={{ background: '#e11d48', color: 'white', border: 'none', marginTop: '16px' }}>Stop</button>
+          </div>
+        )}
 
-        {/* Input Bar */}
-        <form onSubmit={handleSend} className="p-4 border-t border-slate-200/50 dark:border-slate-800/50 flex items-center gap-3 bg-slate-100/30 dark:bg-slate-900/30">
+        <form onSubmit={handleSend} style={{ padding: '16px', display: 'flex', gap: '12px', borderTop: '1px solid var(--border-color)', background: 'var(--bg-color)' }}>
           {speechSupported && (
-            <button
-              type="button"
-              onClick={handleMicToggle}
-              className={`p-3 rounded-xl border border-slate-200/50 dark:border-slate-800/50 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${isListening ? 'bg-rose-500 border-rose-500 text-white animate-pulse' : 'bg-white dark:bg-slate-900 text-primary hover:bg-slate-50'}`}
-            >
-              <Icon name="mic" className="w-5 h-5" />
+            <button type="button" onClick={handleMicToggle} className="sk-card" style={{ padding: '12px', cursor: 'pointer', border: 'none', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', color: 'var(--primary)' }}>
+              <Icon name="mic" />
             </button>
           )}
           
@@ -394,15 +260,12 @@ const AdvisorPage = () => {
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             placeholder={t('chatbot_placeholder') || "Ask me anything about farming..."}
-            className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner"
+            className="sk-card"
+            style={{ flex: 1, border: 'none', outline: 'none', padding: '12px 16px', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)' }}
           />
 
-          <button
-            type="submit"
-            disabled={loading || !inputText.trim()}
-            className="bg-primary hover:bg-primary-dark text-white p-3 rounded-xl flex items-center justify-center border-0 cursor-pointer disabled:opacity-50 hover:scale-105 transition-all shadow-md"
-          >
-            <Icon name="send" className="w-5 h-5" />
+          <button type="submit" disabled={loading || !inputText.trim()} className="sk-button-primary sk-button" style={{ padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name="send" />
           </button>
         </form>
 

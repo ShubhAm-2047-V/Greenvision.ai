@@ -35,49 +35,49 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh] text-left">
-      <div className="glass w-full max-w-md p-8 rounded-3xl border border-slate-200/50 dark:border-slate-800/50 shadow-2xl">
-        <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-white">Welcome Back</h2>
-        <p className="text-xs text-slate-400 mb-6">Sign in to monitor your farm records</p>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', padding: '20px' }}>
+      <div className="sk-card" style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div>
+          <h2 style={{ margin: '0 0 4px', color: 'var(--primary-dark)' }}>Welcome Back</h2>
+          <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Sign in to monitor your farm records</p>
+        </div>
         
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs rounded-lg mb-4">
+          <div style={{ padding: '12px', background: '#ffe4e6', color: '#e11d48', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-slate-500">Email Address</label>
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>Email Address</label>
             <input 
               required 
               type="email" 
               value={email} 
               onChange={e => setEmail(e.target.value)} 
-              className="px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary" 
+              className="sk-card"
+              style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '12px 16px', border: 'none', outline: 'none' }} 
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-slate-500">Password</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>Password</label>
             <input 
               required 
               type="password" 
               value={password} 
               onChange={e => setPassword(e.target.value)} 
-              className="px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary" 
+              className="sk-card"
+              style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '12px 16px', border: 'none', outline: 'none' }} 
             />
           </div>
-          <button 
-            type="submit" 
-            disabled={loading} 
-            className="bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-lg border-0 cursor-pointer transition-all mt-2 flex items-center justify-center gap-2"
-          >
-            {loading && <Icon name="refresh-cw" className="w-4 h-4 animate-spin" />} Sign In
+          <button type="submit" disabled={loading} className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px' }}>
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
-        <p className="text-xs text-center mt-6 text-slate-500">
+        <p style={{ fontSize: '12px', textAlign: 'center', margin: 0, color: 'var(--text-muted)' }}>
           Don't have an account?{' '}
-          <Link href="/register" className="text-primary hover:underline font-bold bg-transparent border-0 cursor-pointer">
+          <Link href="/register" style={{ color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none' }}>
             Register
           </Link>
         </p>
