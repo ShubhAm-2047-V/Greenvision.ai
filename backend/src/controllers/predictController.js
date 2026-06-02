@@ -18,7 +18,7 @@ async function getGeocoding(lat, lon) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
     const res = await axios.get(url, {
       headers: { 'User-Agent': 'AgroMindAI-Client' },
-      timeout: 5000
+      timeout: 2000
     });
     
     if (res.data && res.data.address) {
@@ -39,7 +39,7 @@ async function getGeocoding(lat, lon) {
 async function getWeatherData(lat, lon) {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,rain,showers,snowfall,weather_code,cloud_cover,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,rain_sum,showers_sum,snowfall_sum&timezone=auto`;
-    const res = await axios.get(url, { timeout: 8000 });
+    const res = await axios.get(url, { timeout: 3000 });
     
     if (res.data && res.data.current) {
       const curr = res.data.current;
@@ -131,8 +131,8 @@ async function getSoilGridsData(lat, lon) {
   try {
     const url = `https://soilgrids.org/soilgrids/v2.0/properties/query?lon=${lon}&lat=${lat}&property=nitrogen&property=phh2o&property=soc&property=clay&property=sand&property=silt`;
     // Try primary soilgrids, fallback to rest.isric.org if needed
-    const res = await axios.get(url, { timeout: 8000 }).catch(() => 
-      axios.get(`https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lon}&lat=${lat}&property=nitrogen&property=phh2o&property=soc&property=clay&property=sand&property=silt`, { timeout: 8000 })
+    const res = await axios.get(url, { timeout: 1500 }).catch(() => 
+      axios.get(`https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lon}&lat=${lat}&property=nitrogen&property=phh2o&property=soc&property=clay&property=sand&property=silt`, { timeout: 1500 })
     );
     
     if (res.data && res.data.properties && res.data.properties.layers) {
