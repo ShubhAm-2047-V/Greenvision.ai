@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from '../../context/TranslationContext';
 import { predictCrop, getReportUrl } from '../../services/api';
 import Icon from '../../components/Icon';
+import { compressImage } from '../../utils/image';
 
 const PredictPage = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const PredictPage = () => {
   const [pdfDownloading, setPdfDownloading] = useState(false);
 
   // 1. Handle Multiple Farm Image uploads (JPG, PNG, WEBP)
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
     const validFormats = ['image/jpeg', 'image/png', 'image/webp'];
     
@@ -45,8 +46,13 @@ const PredictPage = () => {
 
     if (filteredFiles.length > 0) {
       setError('');
-      setImages(prev => [...prev, ...filteredFiles]);
-      const filePreviews = filteredFiles.map(file => URL.createObjectURL(file));
+      // Asynchronously compress selected files to fit Vercel payload thresholds
+      const compressedFiles = await Promise.all(
+        filteredFiles.map(file => compressImage(file))
+      );
+      
+      setImages(prev => [...prev, ...compressedFiles]);
+      const filePreviews = compressedFiles.map(file => URL.createObjectURL(file));
       setPreviews(prev => [...prev, ...filePreviews]);
     }
   };

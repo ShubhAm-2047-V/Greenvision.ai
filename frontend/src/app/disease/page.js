@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { scanLeafDisease } from '../../services/api';
 import Icon from '../../components/Icon';
+import { compressImage } from '../../utils/image';
 
 const DiseasePage = () => {
   const router = useRouter();
@@ -18,13 +19,15 @@ const DiseasePage = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file);
-      setPreview(URL.createObjectURL(file));
-      setResult(null);
       setError('');
+      // Compress the selected leaf photo to ensure payload fits Vercel constraints
+      const compressedFile = await compressImage(file);
+      setSelectedFile(compressedFile);
+      setPreview(URL.createObjectURL(compressedFile));
+      setResult(null);
     }
   };
 
