@@ -169,7 +169,7 @@ async function getSoilGridsData(lat, lon) {
 }
 
 export const analyzeFarm = async (req, res) => {
-  const { lat, lon, user_id, farm_name = "My Smart Farm", image_urls = [] } = req.body;
+  const { lat, lon, user_id, farm_name = "My Smart Farm", image_urls = [], image_base64s = [] } = req.body;
 
   if (!lat || !lon || !user_id) {
     return res.status(400).json({ message: "Latitude, longitude, and user_id are required." });
@@ -205,9 +205,25 @@ export const analyzeFarm = async (req, res) => {
 
     if (farmError) throw new Error("Database farm creation failed: " + farmError.message);
 
-    // 4. Download farm images (if uploaded) and prepare multimodal content
+    // 4. Download farm images (if uploaded) or parse inline base64 fallback data and prepare multimodal content
     const contents = [];
-    if (image_urls.length > 0) {
+
+    // Append inline base64 fallback images first
+    if (Array.isArray(image_base64s) && image_base64s.length > 0) {
+      for (const img of image_base64s) {
+        if (img && img.data && img.mimeType) {
+          contents.push({
+            inlineData: {
+              mimeType: img.mimeType,
+              data: img.data
+            }
+          });
+        }
+      }
+    }
+
+    // Append download-based image URLs next
+    if (Array.isArray(image_urls) && image_urls.length > 0) {
       try {
         for (const url of image_urls) {
           const imgRes = await axios.get(url, { responseType: 'arraybuffer', timeout: 5000 });

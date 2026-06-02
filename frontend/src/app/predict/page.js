@@ -9,6 +9,19 @@ import { predictCrop, getReportUrl } from '../../services/api';
 import Icon from '../../components/Icon';
 import { compressImage } from '../../utils/image';
 
+const fileToBase64Obj = (file) => new Promise((resolve) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64String = reader.result.split(',')[1];
+    resolve({
+      mimeType: file.type || 'image/jpeg',
+      data: base64String
+    });
+  };
+  reader.onerror = () => resolve(null);
+  reader.readAsDataURL(file);
+});
+
 const PredictPage = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -136,23 +149,38 @@ const PredictPage = () => {
     }, 2500);
 
     try {
+      // 0. Convert compressed images to base64 strings in parallel as a backend fallback
+      const base64Images = await Promise.all(images.map(file => fileToBase64Obj(file)));
+      const validBase64Images = base64Images.filter(img => img !== null);
+
       // 1. Upload compressed images directly to Supabase Storage from browser
       const uploadedUrls = [];
-      for (const file of images) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${user.id}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-        
-        const { data, error: uploadError } = await uploadWithTimeout(fileName, file);
+      let uploadTimedOutOrFailed = false;
 
-        if (uploadError) {
-          console.error("Supabase direct upload failed:", uploadError.message);
-        } else {
-          const { data: publicUrlData } = supabase.storage
-            .from('farm-images')
-            .getPublicUrl(fileName);
-          uploadedUrls.push(publicUrlData.publicUrl);
+      for (const file of images) {
+        try {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${user.id}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          
+          const { data, error: uploadError } = await uploadWithTimeout(fileName, file);
+
+          if (uploadError) {
+            console.warn("Supabase direct upload returned error:", uploadError.message);
+            uploadTimedOutOrFailed = true;
+          } else {
+            const { data: publicUrlData } = supabase.storage
+              .from('farm-images')
+              .getPublicUrl(fileName);
+            uploadedUrls.push(publicUrlData.publicUrl);
+          }
+        } catch (uploadErr) {
+          console.warn("Supabase direct upload timed out or failed, using base64 fallback:", uploadErr.message);
+          uploadTimedOutOrFailed = true;
         }
       }
+
+      // If any of the uploads failed or timed out, or if we didn't get all of them, use base64 fallback
+      const useBase64Fallback = uploadTimedOutOrFailed || (uploadedUrls.length < images.length);
 
       // 2. Query backend using standard JSON API
       const payload = {
@@ -160,7 +188,8 @@ const PredictPage = () => {
         lon: coords.lon,
         user_id: user.id,
         farm_name: farmName,
-        image_urls: uploadedUrls
+        image_urls: uploadedUrls,
+        image_base64s: useBase64Fallback ? validBase64Images : []
       };
 
       const res = await predictCrop(payload);
