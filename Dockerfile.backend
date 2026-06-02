@@ -1,0 +1,32 @@
+# Backend Dockerfile for AgroMind AI
+FROM python:3.10-slim
+
+# Prevent python from writing pyc files and buffering stdout
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /workspace
+
+# Install system dependencies (needed for PDF rendering / Pillow)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy backend requirements first
+COPY backend/requirements.txt /workspace/backend/requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
+# Copy ML pipeline and files
+COPY ml/ /workspace/ml/
+
+# Copy backend code
+COPY backend/ /workspace/backend/
+
+# Expose backend REST API port
+EXPOSE 5000
+
+ENV PYTHONPATH=/workspace
+
+CMD ["python", "backend/run.py"]

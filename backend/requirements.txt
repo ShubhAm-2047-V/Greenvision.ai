@@ -1,0 +1,12 @@
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-JWT-Extended==4.6.0
+Flask-CORS==4.0.1
+pandas
+numpy
+scikit-learn
+joblib
+reportlab==4.2.0
+requests==2.32.3
+Pillow
+xgboost

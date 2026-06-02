@@ -1,0 +1,39 @@
+# Node dependencies
+node_modules/
+.npm
+npm-debug.log*
+
+# Next.js / Vite build output
+.next/
+out/
+dist/
+build/
+
+# Python / virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Local databases and uploads
+*.db
+*.sqlite
+backend/uploads/
+farm-reports/
+farm-images/
+leaf-images/
+
+# Environment files and secrets (never commit these)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.backup
+.DS_Store
