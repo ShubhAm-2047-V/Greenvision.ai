@@ -30,10 +30,5 @@ farm-images/
 leaf-images/
 
 # Environment files and secrets (never commit these)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.backup
+.env*
 .DS_Store
