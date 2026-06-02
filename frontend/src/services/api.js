@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const getBaseUrl = () => {
-  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+  if (process.env.NEXT_PUBLIC_BACKEND_URL && process.env.NEXT_PUBLIC_BACKEND_URL !== '/') {
     return process.env.NEXT_PUBLIC_BACKEND_URL;
   }
   if (typeof window !== 'undefined') {
