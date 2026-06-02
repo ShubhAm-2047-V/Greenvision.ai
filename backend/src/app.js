@@ -47,11 +47,13 @@ app.use((err, req, res, next) => {
 });
 
 // Start Express Server
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`AgroMind AI Express server online at: http://localhost:${PORT}`);
-  console.log(`Health Check: http://localhost:${PORT}/health`);
-  console.log(`==================================================`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`AgroMind AI Express server online at: http://localhost:${PORT}`);
+    console.log(`Health Check: http://localhost:${PORT}/health`);
+    console.log(`==================================================`);
+  });
+}
 
 export default app;
