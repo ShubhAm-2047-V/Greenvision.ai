@@ -81,24 +81,30 @@ const AppContent = () => {
             </button>
             {langOpen && (
               <div className="absolute right-0 mt-2 w-32 glass border border-slate-200/50 dark:border-slate-800/50 rounded-lg shadow-lg overflow-hidden z-50">
-                <button
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800"
                   onClick={() => { changeLocale('en'); setLangOpen(false); }}
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors"
-                >
-                  English
-                </button>
-                <button
+                >English</button>
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800"
                   onClick={() => { changeLocale('hi'); setLangOpen(false); }}
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors"
-                >
-                  हिन्दी
-                </button>
-                <button
+                >हिन्दी</button>
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800"
                   onClick={() => { changeLocale('mr'); setLangOpen(false); }}
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors"
-                >
-                  मराठी
-                </button>
+                >मराठी</button>
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  onClick={() => { changeLocale('kn'); setLangOpen(false); }}
+                >ಕನ್ನಡ</button>
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  onClick={() => { changeLocale('te'); setLangOpen(false); }}
+                >తెలుగు</button>
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  onClick={() => { changeLocale('gu'); setLangOpen(false); }}
+                >ગુજરાતી</button>
               </div>
             )}
           </div>

@@ -62,6 +62,9 @@ const Navbar = () => {
               <button onClick={() => { setLocale('en'); setLangOpen(false); }} className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors bg-transparent border-0 cursor-pointer text-slate-700 dark:text-slate-350">English</button>
               <button onClick={() => { setLocale('hi'); setLangOpen(false); }} className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors bg-transparent border-0 cursor-pointer text-slate-700 dark:text-slate-350">हिन्दी</button>
               <button onClick={() => { setLocale('mr'); setLangOpen(false); }} className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors bg-transparent border-0 cursor-pointer text-slate-700 dark:text-slate-350">मराठी</button>
+              <button onClick={() => { setLocale('kn'); setLangOpen(false); }} className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors bg-transparent border-0 cursor-pointer text-slate-700 dark:text-slate-350">ಕನ್ನಡ</button>
+              <button onClick={() => { setLocale('te'); setLangOpen(false); }} className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors bg-transparent border-0 cursor-pointer text-slate-700 dark:text-slate-350">తెలుగు</button>
+              <button onClick={() => { setLocale('gu'); setLangOpen(false); }} className="w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors bg-transparent border-0 cursor-pointer text-slate-700 dark:text-slate-350">ગુજરાતી</button>
             </div>
           )}
         </div>

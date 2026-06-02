@@ -62,6 +62,9 @@ const Navbar = () => {
               <button onClick={() => { setLocale('en'); setLangOpen(false); }} className="sk-button" style={{ padding: '6px' }}>English</button>
               <button onClick={() => { setLocale('hi'); setLangOpen(false); }} className="sk-button" style={{ padding: '6px' }}>हिन्दी</button>
               <button onClick={() => { setLocale('mr'); setLangOpen(false); }} className="sk-button" style={{ padding: '6px' }}>मराठी</button>
+              <button onClick={() => { setLocale('kn'); setLangOpen(false); }} className="sk-button" style={{ padding: '6px' }}>ಕನ್ನಡ</button>
+              <button onClick={() => { setLocale('te'); setLangOpen(false); }} className="sk-button" style={{ padding: '6px' }}>తెలుగు</button>
+              <button onClick={() => { setLocale('gu'); setLangOpen(false); }} className="sk-button" style={{ padding: '6px' }}>ગુજરાતી</button>
             </div>
           )}
         </div>
