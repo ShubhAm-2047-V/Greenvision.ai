@@ -134,7 +134,17 @@ const PredictPage = () => {
       setStep(4);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "Failed to generate AI crop planning report. Please try again.");
+      let detailedMsg = "Failed to generate AI crop planning report.";
+      if (err.response?.data?.message) {
+        detailedMsg += ` Error: ${err.response.data.message}`;
+      } else if (err.response?.status) {
+        detailedMsg += ` (HTTP Status: ${err.response.status} - ${err.response.statusText || 'Error'})`;
+      } else if (err.message) {
+        detailedMsg += ` Details: ${err.message}`;
+      } else {
+        detailedMsg += " Please check your internet connection and try again.";
+      }
+      setError(detailedMsg);
       setStep(2);
     } finally {
       clearInterval(timer);
