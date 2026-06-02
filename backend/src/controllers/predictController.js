@@ -169,8 +169,7 @@ async function getSoilGridsData(lat, lon) {
 }
 
 export const analyzeFarm = async (req, res) => {
-  const { lat, lon, user_id, farm_name = "My Smart Farm" } = req.body;
-  const files = req.files || [];
+  const { lat, lon, user_id, farm_name = "My Smart Farm", image_urls = [] } = req.body;
 
   if (!lat || !lon || !user_id) {
     return res.status(400).json({ message: "Latitude, longitude, and user_id are required." });
@@ -184,33 +183,10 @@ export const analyzeFarm = async (req, res) => {
       getSoilGridsData(lat, lon)
     ]);
 
-    // 2. Upload multiple images to Supabase Storage
-    let uploadedUrls = [];
-    if (files.length > 0) {
-      for (const file of files) {
-        const fileExt = file.originalname.split('.').pop();
-        const fileName = `${user_id}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-        
-        const { data, error } = await supabase.storage
-          .from('farm-images')
-          .upload(fileName, file.buffer, {
-            contentType: file.mimetype,
-            upsert: true
-          });
-        
-        if (error) {
-          console.error("Supabase image upload error:", error.message);
-        } else {
-          const { data: publicUrlData } = supabase.storage
-            .from('farm-images')
-            .getPublicUrl(fileName);
-          uploadedUrls.push(publicUrlData.publicUrl);
-        }
-      }
-    }
-
+    // 2. Extract image URL (Supabase upload already processed client-side)
+    const farmImageUrl = image_urls.length > 0 ? image_urls[0] : null;
+ 
     // 3. Create or Update Farm Record in database
-    const farmImageUrl = uploadedUrls.length > 0 ? uploadedUrls[0] : null;
     const { data: farm, error: farmError } = await supabase
       .from('farms')
       .insert({
@@ -229,19 +205,21 @@ export const analyzeFarm = async (req, res) => {
 
     if (farmError) throw new Error("Database farm creation failed: " + farmError.message);
 
-    // 4. Run Gemini Vision Image Analysis on all uploaded farm images
+    // 4. Run Gemini Vision Image Analysis on public Supabase image URLs
     let visionAnalysis = "No farm images uploaded. Using baseline agricultural parameters.";
-    if (files.length > 0) {
+    if (image_urls.length > 0) {
       try {
         const contents = [];
-        files.forEach(fileObj => {
+        for (const url of image_urls) {
+          const imgRes = await axios.get(url, { responseType: 'arraybuffer', timeout: 5000 });
+          const mimeType = imgRes.headers['content-type'] || 'image/jpeg';
           contents.push({
             inlineData: {
-              mimeType: fileObj.mimetype,
-              data: fileObj.buffer.toString('base64')
+              mimeType: mimeType,
+              data: Buffer.from(imgRes.data).toString('base64')
             }
           });
-        });
+        }
 
         contents.push(`
           Perform a detailed agronomic analysis of the uploaded farm/soil/crop images. 

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth, supabase } from '../../context/AuthContext';
 import { useTranslation } from '../../context/TranslationContext';
 import { predictCrop, getReportUrl } from '../../services/api';
 import Icon from '../../components/Icon';
@@ -125,17 +125,39 @@ const PredictPage = () => {
     }, 2500);
 
     try {
-      const formData = new FormData();
-      formData.append('lat', coords.lat);
-      formData.append('lon', coords.lon);
-      formData.append('user_id', user.id);
-      formData.append('farm_name', farmName);
-      
-      images.forEach((file) => {
-        formData.append('images', file);
-      });
+      // 1. Upload compressed images directly to Supabase Storage from browser
+      const uploadedUrls = [];
+      for (const file of images) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user.id}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        
+        const { data, error: uploadError } = await supabase.storage
+          .from('farm-images')
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: true
+          });
 
-      const res = await predictCrop(formData);
+        if (uploadError) {
+          console.error("Supabase direct upload failed:", uploadError.message);
+        } else {
+          const { data: publicUrlData } = supabase.storage
+            .from('farm-images')
+            .getPublicUrl(fileName);
+          uploadedUrls.push(publicUrlData.publicUrl);
+        }
+      }
+
+      // 2. Query backend using standard JSON API
+      const payload = {
+        lat: coords.lat,
+        lon: coords.lon,
+        user_id: user.id,
+        farm_name: farmName,
+        image_urls: uploadedUrls
+      };
+
+      const res = await predictCrop(payload);
       setResult(res.data.prediction);
       setStep(4);
     } catch (err) {

@@ -22,13 +22,9 @@ const apiClient = axios.create({
   }
 });
 
-export const predictCrop = async (formData) => {
-  // Accepts a Multipart/form-data object containing files, lat, lon, user_id, etc.
-  return apiClient.post('/api/predict/analyze', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
+export const predictCrop = async (payload) => {
+  // Accepts a JSON payload object containing lat, lon, user_id, farm_name, image_urls list
+  return apiClient.post('/api/predict/analyze', payload);
 };
 
 export const ocrSoil = async (file) => {

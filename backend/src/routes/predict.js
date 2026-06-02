@@ -6,7 +6,7 @@ import { analyzeFarm, ocrSoilCard } from '../controllers/predictController.js';
 const router = express.Router();
 const upload = multer({ limits: { fileSize: 16 * 1024 * 1024 } }); // 16MB max
 
-router.post('/analyze', upload.array('images', 5), analyzeFarm);
+router.post('/analyze', analyzeFarm);
 router.post('/ocr', upload.single('image'), ocrSoilCard);
 
 export default router;
