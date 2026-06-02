@@ -125,7 +125,7 @@ const AdvisorPage = () => {
     setMessages(prev => [...prev, userMsg]);
 
     try {
-      const res = await chatbotMessage(user.id, text);
+      const res = await chatbotMessage(user.id, text, locale);
       const botResponse = res.data.response;
 
       const botMsg = { id: Math.random().toString(), sender: 'bot', text: botResponse, created_at: new Date().toISOString() };

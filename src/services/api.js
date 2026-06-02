@@ -41,8 +41,8 @@ export const scanLeafDisease = async (file, cropType, userId) => {
   });
 };
 
-export const chatbotMessage = async (userId, text) => {
-  return apiClient.post('/api/chat', { user_id: userId, message: text });
+export const chatbotMessage = async (userId, text, locale = 'en') => {
+  return apiClient.post('/api/chat', { user_id: userId, message: text, locale });
 };
 
 export const getReportUrl = async (predictionId) => {

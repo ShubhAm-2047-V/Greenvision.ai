@@ -6,11 +6,18 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(request) {
   try {
-    const { user_id, message } = await request.json();
+    const { user_id, message, locale } = await request.json();
 
     if (!message || !user_id) {
       return NextResponse.json({ message: "Message and user_id are required." }, { status: 400 });
     }
+
+    const languageMap = {
+      'en': 'English',
+      'hi': 'Hindi',
+      'mr': 'Marathi'
+    };
+    const targetLanguage = languageMap[locale] || 'English';
 
     await supabaseAdmin.from('chat_messages').insert({
       user_id,
@@ -23,7 +30,7 @@ export async function POST(request) {
       Answer the farmer's queries regarding soil chemistry, drip irrigation, NPK values, crop diseases, yield optimization, and general weather impacts.
       
       CRITICAL INSTRUCTIONS:
-      - Answer in the SAME language as the query (English, Hindi, or Marathi).
+      - ALWAYS answer in ${targetLanguage}, regardless of what language the user types in.
       - Keep responses concise, clear, and highly practical for a farmer.
       - Do not use complex scientific terminology without immediately explaining it in simple terms.
       
