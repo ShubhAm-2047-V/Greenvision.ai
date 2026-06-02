@@ -1,0 +1,27 @@
+{
+  "name": "agromind-frontend",
+  "version": "1.0.0",
+  "description": "Next.js frontend for AgroMind AI smart farming platform",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@google/genai": "^0.2.0",
+    "@supabase/supabase-js": "^2.39.8",
+    "axios": "^1.6.8",
+    "chart.js": "^4.4.2",
+    "framer-motion": "^11.0.8",
+    "lucide-react": "^0.359.0",
+    "next": "^14.1.4",
+    "pdfkit": "^0.15.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+  }
+}
