@@ -231,8 +231,8 @@ const PredictPage = () => {
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div>
-        <h1 style={{ color: 'var(--primary-dark)', margin: '0 0 8px' }}>Analyze My Farm</h1>
-        <p style={{ color: 'var(--text-muted)', margin: 0 }}>Upload images and allow location access to automatically compile soil, weather, and AI recommendations.</p>
+        <h1 style={{ color: 'var(--primary-dark)', margin: '0 0 8px' }}>{t('predict_title')}</h1>
+        <p style={{ color: 'var(--text-muted)', margin: 0 }}>{t('predict_desc')}</p>
       </div>
 
       {error && (
@@ -244,10 +244,10 @@ const PredictPage = () => {
       {/* Stepper Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', fontSize: '12px', fontWeight: 'bold' }}>
         {[
-          { num: 1, label: "Upload Snapshots" },
-          { num: 2, label: "Location & Run" },
-          { num: 3, label: "AI Compilation" },
-          { num: 4, label: "Agronomic Report" }
+          { num: 1, label: t('predict_step1') },
+          { num: 2, label: t('predict_step2') },
+          { num: 3, label: t('predict_step3') },
+          { num: 4, label: t('predict_step4') }
         ].map((s) => (
           <div key={s.num} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: step === s.num ? 'var(--primary-dark)' : 'var(--text-muted)' }}>
             <span style={{ 
@@ -262,9 +262,9 @@ const PredictPage = () => {
       {step === 1 && (
         <div className="sk-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Icon name="camera" style={{ color: 'var(--primary)' }} /> Farm & Crop Images
+            <Icon name="camera" style={{ color: 'var(--primary)' }} /> {t('predict_s1_title')}
           </h3>
-          <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Upload farm snapshots, soil images, or leaf photographs. Supported formats: JPG, PNG, WEBP.</p>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('predict_s1_desc')}</p>
           
           <div className="sk-card" style={{ 
             border: '2px dashed var(--primary-light)', padding: '40px', textAlign: 'center', 
@@ -272,7 +272,7 @@ const PredictPage = () => {
           }}>
             <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} style={{ opacity: 0, position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: 'pointer' }} />
             <Icon name="upload" style={{ width: '48px', height: '48px', color: 'var(--text-muted)', margin: '0 auto 8px' }} />
-            <span style={{ fontWeight: 'bold', color: 'var(--text-muted)' }}>Drag & Drop or Select Images</span>
+            <span style={{ fontWeight: 'bold', color: 'var(--text-muted)' }}>{t('predict_s1_drag')}</span>
           </div>
 
           {previews.length > 0 && (
@@ -289,7 +289,7 @@ const PredictPage = () => {
           )}
 
           <button onClick={() => setStep(2)} disabled={images.length === 0} className="sk-button-primary sk-button" style={{ alignSelf: 'flex-end', marginTop: '16px' }}>
-            Continue to Location
+            {t('predict_s1_btn')}
           </button>
         </div>
       )}
@@ -297,7 +297,7 @@ const PredictPage = () => {
       {step === 2 && (
         <div className="sk-card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: 'bold', color: 'var(--text-muted)' }}>Farm Name</label>
+            <label style={{ fontWeight: 'bold', color: 'var(--text-muted)' }}>{t('predict_s2_farm_name')}</label>
             <input 
               type="text" 
               value={farmName}
@@ -309,32 +309,32 @@ const PredictPage = () => {
 
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
             <Icon name="globe" style={{ width: '64px', height: '64px', color: 'var(--primary)' }} />
-            <h3 style={{ margin: 0 }}>Location Data</h3>
+            <h3 style={{ margin: 0 }}>{t('predict_s2_title')}</h3>
             
             {coords ? (
               <>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>We have your saved farm location. You can proceed with analysis, or update it if you have moved.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>{t('predict_s2_desc1')}</p>
                 <div className="sk-card" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 'bold', fontSize: '14px', padding: '12px' }}>
-                  Coordinates: Lat {coords.lat.toFixed(4)}, Lon {coords.lon.toFixed(4)}
+                  {t('predict_s2_coords')} {coords.lat.toFixed(4)}, Lon {coords.lon.toFixed(4)}
                 </div>
                 <button onClick={triggerLocation} disabled={locLoading} className="sk-button" style={{ marginTop: '8px' }}>
-                  {locLoading ? 'Updating...' : 'Update Location'}
+                  {locLoading ? t('predict_s2_btn_updating') : t('predict_s2_btn_update')}
                 </button>
               </>
             ) : (
               <>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Grant browser location access to automatically pull meteorological data from Open-Meteo and chemical parameters from SoilGrids.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>{t('predict_s2_desc2')}</p>
                 <button onClick={triggerLocation} disabled={locLoading} className="sk-button">
-                  {locLoading ? 'Loading...' : 'Allow Location Access'}
+                  {locLoading ? t('predict_s2_btn_loading') : t('predict_s2_btn_allow')}
                 </button>
               </>
             )}
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
-            <button onClick={() => setStep(1)} className="sk-button">Back</button>
+            <button onClick={() => setStep(1)} className="sk-button">{t('predict_s2_btn_back')}</button>
             <button onClick={executeAnalysis} disabled={!coords || predictLoading} className="sk-button-primary sk-button">
-              Execute Automated Analysis
+              {t('predict_s2_btn_execute')}
             </button>
           </div>
         </div>
@@ -342,7 +342,7 @@ const PredictPage = () => {
 
       {step === 3 && (
         <div className="sk-card" style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <h3 style={{ color: 'var(--primary-dark)' }}>AgroMind AI Engine Processing...</h3>
+          <h3 style={{ color: 'var(--primary-dark)' }}>{t('predict_s3_title')}</h3>
           <p style={{ color: 'var(--text-muted)', fontWeight: 'bold', marginTop: '16px' }}>{loadingMsg}</p>
         </div>
       )}
@@ -351,11 +351,11 @@ const PredictPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div className="sk-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase' }}>Geocoded Location</span>
+              <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase' }}>{t('predict_s4_geo')}</span>
               <h3 style={{ margin: 0 }}>{result.weather_data?.conditions ? `${result.state}, ${result.district}` : `${result.state}, India`}</h3>
             </div>
             <button onClick={triggerPdfDownload} disabled={pdfDownloading} className="sk-button" style={{ background: '#1e293b', color: 'white' }}>
-              {pdfDownloading ? 'Downloading...' : 'Download PDF Report'}
+              {pdfDownloading ? t('predict_s4_btn_dl_loading') : t('predict_s4_btn_dl')}
             </button>
           </div>
 
@@ -365,8 +365,8 @@ const PredictPage = () => {
                 {result.farm_health_score || '85'}
               </div>
               <div>
-                <h4 style={{ margin: '0 0 4px' }}>Farm Health Score</h4>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Vegetative growth, hydration density, and crop condition parameters.</p>
+                <h4 style={{ margin: '0 0 4px' }}>{t('predict_s4_farm_h')}</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{t('predict_s4_farm_h_desc')}</p>
               </div>
             </div>
             <div className="sk-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -374,23 +374,23 @@ const PredictPage = () => {
                 {result.soil_health_score || '78'}
               </div>
               <div>
-                <h4 style={{ margin: '0 0 4px' }}>Soil Health Score</h4>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Estimated organic carbon, mineral nutrient balance.</p>
+                <h4 style={{ margin: '0 0 4px' }}>{t('predict_s4_soil_h')}</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{t('predict_s4_soil_h_desc')}</p>
               </div>
             </div>
           </div>
 
           <div className="sk-card" style={{ background: 'var(--grad-convex)' }}>
-            <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase' }}>Main Crop Recommendation</span>
+            <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase' }}>{t('predict_s4_main_crop')}</span>
             <h2 style={{ margin: '8px 0', fontSize: '32px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'capitalize' }}>
-              <Icon name="leaf" style={{ color: 'var(--primary)' }} /> {result.crop}
+              <Icon name="leaf" style={{ color: 'var(--primary)' }} /> {t(result.crop.toLowerCase()) || result.crop}
             </h2>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', margin: '16px 0', padding: '16px 0', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
-              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Confidence</span><strong style={{ color: 'var(--primary)' }}>{(result.confidence).toFixed(1)}%</strong></div>
-              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Duration</span><strong>{result.crops_list?.[0]?.growth_duration || '120 Days'}</strong></div>
-              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Yield</span><strong>{result.expected_yield}</strong></div>
-              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Profit</span><strong style={{ color: '#10b981' }}>{result.expected_profit}</strong></div>
+              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('predict_s4_conf')}</span><strong style={{ color: 'var(--primary)' }}>{(result.confidence).toFixed(1)}%</strong></div>
+              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('predict_s4_duration')}</span><strong>{result.crops_list?.[0]?.growth_duration || '120 Days'}</strong></div>
+              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('predict_s4_yield')}</span><strong>{result.expected_yield}</strong></div>
+              <div style={{ flex: '1 1 120px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('predict_s4_profit')}</span><strong style={{ color: '#10b981' }}>{result.expected_profit}</strong></div>
             </div>
 
             <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-muted)' }}>{result.explanation}</p>

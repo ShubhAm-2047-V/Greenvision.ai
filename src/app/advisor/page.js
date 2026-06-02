@@ -171,20 +171,20 @@ const AdvisorPage = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
         <div>
           <h1 style={{ margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)' }}>
-            <Icon name="message-square" style={{ color: 'var(--primary)' }} /> {t('chatbot')}
+            <Icon name="message-square" style={{ color: 'var(--primary)' }} /> {t('advisor_title')}
           </h1>
-          <p style={{ margin: 0, color: 'var(--text-muted)' }}>Ask agronomic queries in English, Hindi, or Marathi.</p>
+          <p style={{ margin: 0, color: 'var(--text-muted)' }}>{t('advisor_desc')}</p>
         </div>
         
         <div style={{ display: 'flex', gap: '8px' }}>
           {isSpeaking && (
             <button onClick={handleStopSpeech} style={{ padding: '8px 12px', background: '#ffe4e6', color: '#e11d48', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 'bold' }}>
-              <Icon name="x" style={{ width: '16px', height: '16px' }} /> Stop
+              <Icon name="x" style={{ width: '16px', height: '16px' }} /> {t('advisor_btn_stop')}
             </button>
           )}
           <button onClick={() => setVoiceEnabled(!voiceEnabled)} className="sk-button" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
             <Icon name={voiceEnabled ? 'volume-2' : 'volume-x'} style={{ width: '16px', height: '16px', color: voiceEnabled ? 'var(--primary)' : 'inherit' }} />
-            {voiceEnabled ? 'Voice ON' : 'Voice OFF'}
+            {voiceEnabled ? t('advisor_btn_voice_on') : t('advisor_btn_voice_off')}
           </button>
         </div>
       </div>
@@ -197,8 +197,8 @@ const AdvisorPage = () => {
               <div style={{ width: '64px', height: '64px', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--primary)' }}>
                 <Icon name="bot" style={{ width: '32px', height: '32px' }} />
               </div>
-              <h3 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>Welcome to AgroMind Advisor</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '24px' }}>How can I help you today? You can select a quick question below, write your query, or click the microphone to speak.</p>
+              <h3 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>{t('advisor_welcome')}</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '24px' }}>{t('advisor_welcome_desc')}</p>
               
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
                 {prefillQuestions.map((q, idx) => (
@@ -229,22 +229,22 @@ const AdvisorPage = () => {
                 </div>
                 {msg.sender === 'bot' && (
                   <button onClick={() => speakText(msg.text)} style={{ alignSelf: 'flex-start', fontSize: '10px', color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Icon name="volume-2" style={{ width: '12px', height: '12px' }} /> Speak
+                    <Icon name="volume-2" style={{ width: '12px', height: '12px' }} /> {t('advisor_btn_speak')}
                   </button>
                 )}
               </div>
             </div>
           ))}
           {loading && (
-             <div style={{ alignSelf: 'flex-start', fontStyle: 'italic', color: 'var(--text-muted)', fontSize: '12px' }}>Advisor is thinking...</div>
+             <div style={{ alignSelf: 'flex-start', fontStyle: 'italic', color: 'var(--text-muted)', fontSize: '12px' }}>{t('advisor_thinking')}</div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
         {isListening && (
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
-            <h3 style={{ color: 'var(--primary-dark)' }}>Listening...</h3>
-            <button onClick={handleMicToggle} className="sk-button" style={{ background: '#e11d48', color: 'white', border: 'none', marginTop: '16px' }}>Stop</button>
+            <h3 style={{ color: 'var(--primary-dark)' }}>{t('advisor_listening')}</h3>
+            <button onClick={handleMicToggle} className="sk-button" style={{ background: '#e11d48', color: 'white', border: 'none', marginTop: '16px' }}>{t('advisor_btn_stop')}</button>
           </div>
         )}
 
@@ -259,7 +259,7 @@ const AdvisorPage = () => {
             type="text"
             value={inputText}
             onChange={e => setInputText(e.target.value)}
-            placeholder={t('chatbot_placeholder') || "Ask me anything about farming..."}
+            placeholder={t('advisor_placeholder')}
             className="sk-card"
             style={{ flex: 1, border: 'none', outline: 'none', padding: '12px 16px', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)' }}
           />

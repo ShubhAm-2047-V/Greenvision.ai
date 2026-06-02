@@ -96,31 +96,28 @@ const DashboardPage = () => {
   if (authLoading || loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: '16px' }}>
-        Loading your Agronomy Dashboard...
+        {t('dash_loading')}
       </div>
     );
   }
-
-  const popularCrops = Object.entries(stats?.distributions || {}).sort((a,b) => b[1]-a[1]).slice(0, 4);
-  const maxCropVal = popularCrops.length > 0 ? Math.max(...popularCrops.map(e => e[1])) : 1;
 
   if (profile?.role === 'admin') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>Admin Console</h1>
-          <p style={{ margin: 0, color: 'var(--text-muted)' }}>Monitor precision systems and check agricultural AI metrics.</p>
+          <h1 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>{t('dash_admin_title')}</h1>
+          <p style={{ margin: 0, color: 'var(--text-muted)' }}>{t('dash_admin_desc')}</p>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
           {[
-            { label: "Active Farmers", val: stats?.farmsCount || 0, icon: "user", col: "var(--primary)" },
-            { label: "Total Predictions", val: stats?.predsCount || 0, icon: "activity", col: "var(--accent)" },
-            { label: "Pathology Scans", val: stats?.diseasesCount || 0, icon: "camera", col: "#0ea5e9" },
-            { label: "AI System Accuracy", val: "97.4%", icon: "target", col: "#10b981" }
+            { label: t('dash_admin_active_farmers'), val: stats?.farmsCount || 0, icon: "user", col: "var(--primary)" },
+            { label: t('dash_admin_total_preds'), val: stats?.predsCount || 0, icon: "activity", col: "var(--accent)" },
+            { label: t('dash_admin_path_scans'), val: stats?.diseasesCount || 0, icon: "camera", col: "#0ea5e9" },
+            { label: t('dash_admin_ai_accuracy'), val: "97.4%", icon: "target", col: "#10b981" }
           ].map((s, i) => (
-            <div key={i} className="sk-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '16px', borderRadius: '50%', color: s.col }}>
+            <div key={i} className="sk-card anim-slide-up" style={{ display: 'flex', alignItems: 'center', gap: '16px', animationDelay: `${i * 0.1}s` }}>
+              <div className="anim-pop" style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '16px', borderRadius: '50%', color: s.col }}>
                 <Icon name={s.icon} />
               </div>
               <div>
@@ -138,25 +135,25 @@ const DashboardPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>Farmer Workspace</h1>
-          <p style={{ margin: 0, color: 'var(--text-muted)' }}>View real-time farm health indices, soil parameters, and climate metrics.</p>
+          <h1 style={{ margin: '0 0 8px', color: 'var(--primary-dark)' }}>{t('dash_farmer_title')}</h1>
+          <p style={{ margin: 0, color: 'var(--text-muted)' }}>{t('dash_farmer_desc')}</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href="/predict" className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            <Icon name="plus" /> Analyze Farm
+            <Icon name="plus" /> {t('dash_btn_analyze')}
           </Link>
           <Link href="/disease" className="sk-button" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            <Icon name="camera" style={{ color: 'var(--primary)' }} /> Scan Leaf
+            <Icon name="camera" style={{ color: 'var(--primary)' }} /> {t('dash_btn_scan')}
           </Link>
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
         {[
-          { label: "Farm Health Score", val: latestPred?.farm_health_score ? `${latestPred.farm_health_score}%` : 'N/A', icon: "activity", col: "var(--primary)" },
-          { label: "Soil Health Score", val: latestPred?.soil_health_score ? `${latestPred.soil_health_score}%` : 'N/A', icon: "sprout", col: "#10b981" },
-          { label: "Weather Condition", val: latestPred?.weather_data?.conditions || 'Stable', icon: "sun", col: "#f59e0b" },
-          { label: "Disease Alerts", val: stats?.diseasesCount || 0, icon: "camera", col: "#e11d48" }
+          { label: t('dash_metric_farm_health'), val: latestPred?.farm_health_score ? `${latestPred.farm_health_score}%` : 'N/A', icon: "activity", col: "var(--primary)" },
+          { label: t('dash_metric_soil_health'), val: latestPred?.soil_health_score ? `${latestPred.soil_health_score}%` : 'N/A', icon: "sprout", col: "#10b981" },
+          { label: t('dash_metric_weather'), val: latestPred?.weather_data?.conditions ? t(latestPred.weather_data.conditions.toLowerCase()) || latestPred.weather_data.conditions : t('stable'), icon: "sun", col: "#f59e0b" },
+          { label: t('dash_metric_disease'), val: stats?.diseasesCount || 0, icon: "camera", col: "#e11d48" }
         ].map((s, i) => (
           <div key={i} className="sk-card anim-slide-up" style={{ display: 'flex', alignItems: 'center', gap: '16px', animationDelay: `${i * 0.1}s` }}>
             <div className="anim-pop" style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '16px', borderRadius: '50%', color: s.col }}>
@@ -172,14 +169,14 @@ const DashboardPage = () => {
 
       {latestPred && (
         <div className="sk-card anim-slide-up" style={{ background: 'var(--grad-convex)', animationDelay: '0.4s' }}>
-          <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', color: 'var(--primary)', letterSpacing: '1px' }}>Latest Analysis</span>
-          <h2 style={{ margin: '8px 0', fontSize: '28px', color: 'var(--primary-dark)' }}>Recommended Crop: <span style={{ color: 'var(--primary)' }}>{latestPred.crop}</span></h2>
+          <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', color: 'var(--primary)', letterSpacing: '1px' }}>{t('dash_latest_badge')}</span>
+          <h2 style={{ margin: '8px 0', fontSize: '28px', color: 'var(--primary-dark)' }}>{t('dash_latest_title')} <span style={{ color: 'var(--primary)' }}>{t(latestPred.crop.toLowerCase()) || latestPred.crop}</span></h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6, maxWidth: '800px' }}>{latestPred.explanation}</p>
           
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-            <div style={{ flex: '1 1 150px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Expected Yield</span><strong style={{ fontSize: '16px' }}>{latestPred.expected_yield}</strong></div>
-            <div style={{ flex: '1 1 150px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Expected Revenue</span><strong style={{ fontSize: '16px' }}>{latestPred.expected_revenue}</strong></div>
-            <div style={{ flex: '1 1 150px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>Expected Profit</span><strong style={{ fontSize: '16px', color: '#10b981' }}>{latestPred.expected_profit}</strong></div>
+            <div style={{ flex: '1 1 150px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('dash_latest_yield')}</span><strong style={{ fontSize: '16px' }}>{latestPred.expected_yield}</strong></div>
+            <div style={{ flex: '1 1 150px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('dash_latest_revenue')}</span><strong style={{ fontSize: '16px' }}>{latestPred.expected_revenue}</strong></div>
+            <div style={{ flex: '1 1 150px' }}><span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('dash_latest_profit')}</span><strong style={{ fontSize: '16px', color: '#10b981' }}>{latestPred.expected_profit}</strong></div>
           </div>
         </div>
       )}

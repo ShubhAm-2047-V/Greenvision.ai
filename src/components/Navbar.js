@@ -69,8 +69,8 @@ const Navbar = () => {
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{profile?.name || 'Farmer'}</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{profile?.role || 'Farmer'}</span>
+              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{profile?.name || t('navbar_farmer')}</span>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{profile?.role || t('navbar_farmer')}</span>
             </div>
             <button
               onClick={handleLogout}
