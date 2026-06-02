@@ -158,7 +158,7 @@ const DashboardPage = () => {
           { label: "Weather Condition", val: latestPred?.weather_data?.conditions || 'Stable', icon: "sun", col: "#f59e0b" },
           { label: "Disease Alerts", val: stats?.diseasesCount || 0, icon: "camera", col: "#e11d48" }
         ].map((s, i) => (
-          <div key={i} className="sk-card anim-slide-up" style={{ display: 'flex', alignItems: 'center', gap: '16px', animationDelay: \`\${i * 0.1}s\` }}>
+          <div key={i} className="sk-card anim-slide-up" style={{ display: 'flex', alignItems: 'center', gap: '16px', animationDelay: `${i * 0.1}s` }}>
             <div className="anim-pop" style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '16px', borderRadius: '50%', color: s.col }}>
               <Icon name={s.icon} />
             </div>
