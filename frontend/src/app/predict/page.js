@@ -153,11 +153,10 @@ const PredictPage = () => {
       const base64Images = await Promise.all(images.map(file => fileToBase64Obj(file)));
       const validBase64Images = base64Images.filter(img => img !== null);
 
-      // 1. Upload compressed images directly to Supabase Storage from browser
-      const uploadedUrls = [];
+      // 1. Upload compressed images directly to Supabase Storage from browser in parallel
       let uploadTimedOutOrFailed = false;
 
-      for (const file of images) {
+      const uploadPromises = images.map(async (file) => {
         try {
           const fileExt = file.name.split('.').pop();
           const fileName = `${user.id}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
@@ -167,17 +166,22 @@ const PredictPage = () => {
           if (uploadError) {
             console.warn("Supabase direct upload returned error:", uploadError.message);
             uploadTimedOutOrFailed = true;
+            return null;
           } else {
             const { data: publicUrlData } = supabase.storage
               .from('farm-images')
               .getPublicUrl(fileName);
-            uploadedUrls.push(publicUrlData.publicUrl);
+            return publicUrlData.publicUrl;
           }
         } catch (uploadErr) {
           console.warn("Supabase direct upload timed out or failed, using base64 fallback:", uploadErr.message);
           uploadTimedOutOrFailed = true;
+          return null;
         }
-      }
+      });
+
+      const uploadedUrlResults = await Promise.all(uploadPromises);
+      const uploadedUrls = uploadedUrlResults.filter(url => url !== null);
 
       // If any of the uploads failed or timed out, or if we didn't get all of them, use base64 fallback
       const useBase64Fallback = uploadTimedOutOrFailed || (uploadedUrls.length < images.length);

@@ -23,9 +23,8 @@ export const compressImage = (file) => {
         let width = img.width;
         let height = img.height;
         
-        // Define standard bounding dimensions for high performance but low weight
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 1200;
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
         
         if (width > height) {
           if (width > MAX_WIDTH) {
@@ -60,7 +59,7 @@ export const compressImage = (file) => {
           } else {
             resolve(file); // Fallback to original
           }
-        }, 'image/jpeg', 0.7); // Compress to JPEG with 70% quality (ideal weight vs fidelity ratio)
+        }, 'image/jpeg', 0.6); // Compress to JPEG with 60% quality (ideal weight vs fidelity ratio)
       };
       img.onerror = () => resolve(file);
     };
