@@ -18,7 +18,7 @@ async function getGeocoding(lat, lon) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
     const res = await axios.get(url, {
       headers: { 'User-Agent': 'AgroMindAI-Client' },
-      timeout: 2000
+      timeout: 800
     });
     
     if (res.data && res.data.address) {
@@ -39,7 +39,7 @@ async function getGeocoding(lat, lon) {
 async function getWeatherData(lat, lon) {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,rain,showers,snowfall,weather_code,cloud_cover,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,rain_sum,showers_sum,snowfall_sum&timezone=auto`;
-    const res = await axios.get(url, { timeout: 3000 });
+    const res = await axios.get(url, { timeout: 1000 });
     
     if (res.data && res.data.current) {
       const curr = res.data.current;
@@ -129,11 +129,8 @@ async function getSoilGridsData(lat, lon) {
   };
 
   try {
-    const url = `https://soilgrids.org/soilgrids/v2.0/properties/query?lon=${lon}&lat=${lat}&property=nitrogen&property=phh2o&property=soc&property=clay&property=sand&property=silt`;
-    // Try primary soilgrids, fallback to rest.isric.org if needed
-    const res = await axios.get(url, { timeout: 1500 }).catch(() => 
-      axios.get(`https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lon}&lat=${lat}&property=nitrogen&property=phh2o&property=soc&property=clay&property=sand&property=silt`, { timeout: 1500 })
-    );
+    const url = `https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lon}&lat=${lat}&property=nitrogen&property=phh2o&property=soc&property=clay&property=sand&property=silt`;
+    const res = await axios.get(url, { timeout: 800 });
     
     if (res.data && res.data.properties && res.data.properties.layers) {
       const layers = res.data.properties.layers;
@@ -186,26 +183,7 @@ export const analyzeFarm = async (req, res) => {
     // 2. Extract image URL (Supabase upload already processed client-side)
     const farmImageUrl = image_urls.length > 0 ? image_urls[0] : null;
  
-    // 3. Create or Update Farm Record in database
-    const { data: farm, error: farmError } = await supabase
-      .from('farms')
-      .insert({
-        user_id,
-        name: farm_name,
-        image_url: farmImageUrl,
-        lat,
-        lon,
-        state: location.state,
-        district: location.district,
-        village: location.village,
-        dimensions: "1 Acre"
-      })
-      .select()
-      .single();
-
-    if (farmError) throw new Error("Database farm creation failed: " + farmError.message);
-
-    // 4. Download farm images (if uploaded) or parse inline base64 fallback data and prepare multimodal content
+    // 3. Prepare farm images (if uploaded) or parse inline base64 fallback data and prepare multimodal content
     const contents = [];
 
     // Append inline base64 fallback images first
@@ -240,7 +218,7 @@ export const analyzeFarm = async (req, res) => {
       }
     }
 
-    // 5. Query Multimodal Agricultural AI Engine (Gemini 2.5 Flash) to produce structured recommendations
+    // 4. Query Multimodal Agricultural AI Engine (Gemini 2.5 Flash) to produce structured recommendations
     const prompt = `
       You are AgroMind AI, an expert agricultural intelligence system.
       Analyze the provided farm/crop images (if uploaded), soil data, weather data, and location information.
@@ -350,23 +328,59 @@ export const analyzeFarm = async (req, res) => {
 
     contents.push(prompt);
 
-    let resultJson = {};
-    try {
-      const modelResponse = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: contents
-      });
-
-      const rawText = modelResponse.text || '';
-      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        resultJson = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in Gemini response');
+    // 5. Execute DB Farm record creation and Gemini AI Generation concurrently!
+    // Concurrently insert farm record and execute Gemini with a strict 4s timeout!
+    const geminiCallPromise = ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: contents,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.1
       }
-    } catch (geminiErr) {
-      console.error("Gemini model call failed, using smart fallback.", geminiErr.message);
-      // Intelligent fallback based on real soil + weather data
+    });
+
+    const geminiTimeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Gemini model call timed out after 4 seconds.")), 4000)
+    );
+
+    const [farmResult, geminiResult] = await Promise.all([
+      supabase
+        .from('farms')
+        .insert({
+          user_id,
+          name: farm_name,
+          image_url: farmImageUrl,
+          lat,
+          lon,
+          state: location.state,
+          district: location.district,
+          village: location.village,
+          dimensions: "1 Acre"
+        })
+        .select()
+        .single(),
+      
+      Promise.race([geminiCallPromise, geminiTimeoutPromise]).catch(err => {
+        console.error("Gemini call failed or timed out, using fallback:", err.message);
+        return null;
+      })
+    ]);
+
+    const { data: farm, error: farmError } = farmResult;
+    if (farmError) throw new Error("Database farm creation failed: " + farmError.message);
+
+    let resultJson = {};
+    if (geminiResult) {
+      try {
+        const rawText = geminiResult.text || '';
+        resultJson = JSON.parse(rawText.trim());
+      } catch (parseErr) {
+        console.error("Failed to parse Gemini output JSON, falling back.", parseErr.message);
+      }
+    }
+
+    if (!resultJson.crop) {
+      console.warn("Using smart default fallback recommendations.");
       const season = weather.season;
       const cropMap = { 'Kharif': 'Rice', 'Rabi': 'Wheat', 'Zaid': 'Watermelon' };
       const mainCrop = cropMap[season] || 'Rice';
