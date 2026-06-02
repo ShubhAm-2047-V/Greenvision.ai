@@ -92,6 +92,10 @@ export async function POST(request) {
     if (!lat || !lon || !user_id) {
       return NextResponse.json({ message: "Latitude, longitude, and user_id are required." }, { status: 400 });
     }
+    
+    if ((!image_urls || image_urls.length === 0) && (!image_base64s || image_base64s.length === 0)) {
+      return NextResponse.json({ message: "At least one farm image is required for visual agronomic analysis." }, { status: 400 });
+    }
 
     const [location, weather, soil] = await Promise.all([
       getGeocoding(lat, lon),

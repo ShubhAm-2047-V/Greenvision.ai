@@ -112,6 +112,11 @@ const PredictPage = () => {
       setError("Coordinates are required. Grant Geolocation access first.");
       return;
     }
+    if (images.length === 0) {
+      setError("Please upload at least one farm image before analyzing.");
+      setStep(1);
+      return;
+    }
     if (!user) {
       setError("Please log in or register to access agronomy reports.");
       return;

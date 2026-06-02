@@ -142,3 +142,6 @@ h1, h2, h3, h4, h5, h6 {
   h1 { font-size: 2rem !important; }
   h2 { font-size: 1.5rem !important; }
 }
+
+.sk-button:disabled, .sk-button-primary:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
