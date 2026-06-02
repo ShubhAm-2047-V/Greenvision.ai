@@ -35,6 +35,16 @@ const PredictPage = () => {
   const [locLoading, setLocLoading] = useState(false);
   const [locationSuccess, setLocationSuccess] = useState(false);
 
+  React.useEffect(() => {
+    const saved = localStorage.getItem('agromind_coords');
+    if (saved) {
+      try {
+        setCoords(JSON.parse(saved));
+        setLocationSuccess(true);
+      } catch (e) {}
+    }
+  }, []);
+
   const [predictLoading, setPredictLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState('');
   const [result, setResult] = useState(null);
@@ -79,7 +89,9 @@ const PredictPage = () => {
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          setCoords({ lat, lon });
+          const newCoords = { lat, lon };
+          setCoords(newCoords);
+          localStorage.setItem('agromind_coords', JSON.stringify(newCoords));
           setLocationSuccess(true);
           setLocLoading(false);
         },
@@ -297,17 +309,25 @@ const PredictPage = () => {
 
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
             <Icon name="globe" style={{ width: '64px', height: '64px', color: 'var(--primary)' }} />
-            <h3 style={{ margin: 0 }}>Pinpoint Location</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Grant browser location access to automatically pull meteorological data from Open-Meteo and chemical parameters from SoilGrids.</p>
-
-            <button onClick={triggerLocation} disabled={locLoading} className="sk-button">
-              {locLoading ? 'Loading...' : 'Allow Location Access'}
-            </button>
-
-            {coords && (
-              <div className="sk-card" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 'bold', fontSize: '14px', padding: '12px' }}>
-                Coordinates Resolved: Lat {coords.lat.toFixed(4)}, Lon {coords.lon.toFixed(4)}
-              </div>
+            <h3 style={{ margin: 0 }}>Location Data</h3>
+            
+            {coords ? (
+              <>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>We have your saved farm location. You can proceed with analysis, or update it if you have moved.</p>
+                <div className="sk-card" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 'bold', fontSize: '14px', padding: '12px' }}>
+                  Coordinates: Lat {coords.lat.toFixed(4)}, Lon {coords.lon.toFixed(4)}
+                </div>
+                <button onClick={triggerLocation} disabled={locLoading} className="sk-button" style={{ marginTop: '8px' }}>
+                  {locLoading ? 'Updating...' : 'Update Location'}
+                </button>
+              </>
+            ) : (
+              <>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Grant browser location access to automatically pull meteorological data from Open-Meteo and chemical parameters from SoilGrids.</p>
+                <button onClick={triggerLocation} disabled={locLoading} className="sk-button">
+                  {locLoading ? 'Loading...' : 'Allow Location Access'}
+                </button>
+              </>
             )}
           </div>
 
