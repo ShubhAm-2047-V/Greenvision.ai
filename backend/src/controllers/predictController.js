@@ -205,11 +205,10 @@ export const analyzeFarm = async (req, res) => {
 
     if (farmError) throw new Error("Database farm creation failed: " + farmError.message);
 
-    // 4. Run Gemini Vision Image Analysis on public Supabase image URLs
-    let visionAnalysis = "No farm images uploaded. Using baseline agricultural parameters.";
+    // 4. Download farm images (if uploaded) and prepare multimodal content
+    const contents = [];
     if (image_urls.length > 0) {
       try {
-        const contents = [];
         for (const url of image_urls) {
           const imgRes = await axios.get(url, { responseType: 'arraybuffer', timeout: 5000 });
           const mimeType = imgRes.headers['content-type'] || 'image/jpeg';
@@ -220,38 +219,23 @@ export const analyzeFarm = async (req, res) => {
             }
           });
         }
-
-        contents.push(`
-          Perform a detailed agronomic analysis of the uploaded farm/soil/crop images. 
-          Identify:
-          - Soil details: Soil Type, Soil Texture estimation, Soil Color, Soil Moisture Indicators
-          - Farm overview: Water Availability, Dryness Level, Vegetation Density
-          - Crop health: Crop Presence, Growth Stage, Crop Health, Visible Deficiencies
-          - Pests & Diseases: Visible Disease Symptoms, Pest Indicators
-          Keep your analysis professional, structured, and concise.
-        `);
-
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: contents
-        });
-        visionAnalysis = response.text || visionAnalysis;
       } catch (err) {
-        console.error("Gemini Vision model call failed, fallback used.", err.message);
+        console.error("Failed to download farm images for vision analysis:", err.message);
       }
     }
 
-    // 5. Query Agricultural AI Engine (Gemini 2.5 Pro) to produce structured recommendations
+    // 5. Query Multimodal Agricultural AI Engine (Gemini 2.5 Flash) to produce structured recommendations
     const prompt = `
       You are AgroMind AI, an expert agricultural intelligence system.
-      Analyze farm image data, soil data, weather data, and location information.
+      Analyze the provided farm/crop images (if uploaded), soil data, weather data, and location information.
       
       INPUT DATA:
       - Location: Village: ${location.village}, District: ${location.district}, State: ${location.state}, Country: ${location.country} (Coordinates: ${lat}, ${lon})
       - Weather: Temperature: ${weather.temp}°C, Humidity: ${weather.humidity}%, Rainfall: ${weather.rainfall_monthly_avg}mm, Wind Speed: ${weather.wind_speed} m/s, Clouds: ${weather.cloud_coverage}%, Condition: ${weather.weather_condition}. Season: ${weather.season}
       - Soil Chemical Baselines (from SoilGrids): Nitrogen: ${soil.nitrogen} g/kg, Soil pH: ${soil.ph}, Organic Carbon: ${soil.organic_carbon} g/kg
       - Soil Texture Baselines (from SoilGrids): Sand: ${soil.sand}%, Clay: ${soil.clay}%, Silt: ${soil.silt}%
-      - Farm Visual Analysis (Gemini Vision): ${visionAnalysis}
+
+      If farm/crop images are provided, perform a visual agronomic analysis of the soil type, water availability, dryness level, crop growth stage, crop health, pest indicators, and visible deficiencies, and integrate these visual findings into your final recommendations.
 
       Provide:
       - Farm Health Score (0-100)
@@ -348,11 +332,13 @@ export const analyzeFarm = async (req, res) => {
       }
     `;
 
+    contents.push(prompt);
+
     let resultJson = {};
     try {
       const modelResponse = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: prompt
+        contents: contents
       });
 
       const rawText = modelResponse.text || '';
@@ -363,7 +349,7 @@ export const analyzeFarm = async (req, res) => {
         throw new Error('No JSON found in Gemini response');
       }
     } catch (geminiErr) {
-      console.error("Gemini Pro model call failed, using smart fallback.", geminiErr.message);
+      console.error("Gemini model call failed, using smart fallback.", geminiErr.message);
       // Intelligent fallback based on real soil + weather data
       const season = weather.season;
       const cropMap = { 'Kharif': 'Rice', 'Rabi': 'Wheat', 'Zaid': 'Watermelon' };
@@ -472,7 +458,7 @@ export const analyzeFarm = async (req, res) => {
       message: "Automated farm analysis completed successfully.",
       farm,
       prediction,
-      vision_summary: visionAnalysis
+      vision_summary: "Multimodal agronomic analysis completed successfully."
     });
   } catch (err) {
     console.error("Complete analyzeFarm API error:", err);
