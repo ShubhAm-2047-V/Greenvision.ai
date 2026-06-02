@@ -38,8 +38,12 @@ export async function POST(request) {
 
     const prompt = `
       You are an expert agricultural plant pathologist.
-      Examine this leaf photo of a ${crop_type} plant.
-      Identify any visible crop disease, pest infestation, or nutrient deficiency.
+      
+      CRITICAL INSTRUCTION: Examine the provided image. First, determine if the image is actually a leaf, crop, or plant. 
+      If the image is completely unrelated to plants (e.g., a person, an animal, a car, a random object), you MUST respond ONLY with this exact JSON:
+      {"error": "The uploaded image does not appear to be a plant or leaf. Please upload a valid crop image."}
+
+      If the image IS a plant or leaf, assume it is a ${crop_type} plant. Identify any visible crop disease, pest infestation, or nutrient deficiency.
       
       Respond ONLY with a valid JSON matching this schema:
       {
@@ -72,6 +76,10 @@ export async function POST(request) {
     } catch (parseErr) {
       let cleanText = modelResponse.text.replace(/```json/g, '').replace(/```/g, '').trim();
       resultJson = JSON.parse(cleanText);
+    }
+
+    if (resultJson.error) {
+      return NextResponse.json({ message: resultJson.error }, { status: 400 });
     }
 
     const { data: record, error: dbError } = await supabaseAdmin

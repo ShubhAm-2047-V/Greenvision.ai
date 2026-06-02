@@ -126,7 +126,12 @@ export async function POST(request) {
 
     const prompt = `
       You are AgroMind AI, an expert agricultural intelligence system.
-      Analyze the provided farm/crop images (if uploaded), soil data, weather data, and location information.
+      
+      CRITICAL INSTRUCTION: Analyze the provided image(s). First, determine if the image is relevant to agriculture (e.g., a farm, crops, soil, plants, or leaves). 
+      If the image is completely unrelated to agriculture (e.g., a person, an animal, a car, a random object), you MUST respond ONLY with this exact JSON:
+      {"error": "The uploaded image does not appear to be related to agriculture. Please upload a valid farm or crop image."}
+      
+      If the image IS related to agriculture, analyze the provided farm/crop images, soil data, weather data, and location information.
       
       INPUT DATA:
       - Location: Village: ${location.village}, District: ${location.district}, State: ${location.state}, Country: ${location.country} (Coordinates: ${lat}, ${lon})
@@ -134,7 +139,7 @@ export async function POST(request) {
       - Soil Chemical Baselines (from SoilGrids): Nitrogen: ${soil.nitrogen} g/kg, Soil pH: ${soil.ph}, Organic Carbon: ${soil.organic_carbon} g/kg
       - Soil Texture Baselines (from SoilGrids): Sand: ${soil.sand}%, Clay: ${soil.clay}%, Silt: ${soil.silt}%
 
-      If farm/crop images are provided, perform a visual agronomic analysis of the soil type, water availability, dryness level, crop growth stage, crop health, pest indicators, and visible deficiencies, and integrate these visual findings into your final recommendations.
+      Perform a visual agronomic analysis of the soil type, water availability, dryness level, crop growth stage, crop health, pest indicators, and visible deficiencies, and integrate these visual findings into your final recommendations.
 
       Provide: Farm Health Score (0-100), Soil Health Score (0-100), Top Crop Recommendations, Yield Forecast, Profit Forecast, Fertilizer Plan, Irrigation Plan, Farming Recommendations.
 
@@ -169,6 +174,10 @@ export async function POST(request) {
       try {
         resultJson = JSON.parse(geminiResult.text.trim());
       } catch (parseErr) {}
+    }
+
+    if (resultJson.error) {
+      return NextResponse.json({ message: resultJson.error }, { status: 400 });
     }
 
     if (!resultJson.crop) {
