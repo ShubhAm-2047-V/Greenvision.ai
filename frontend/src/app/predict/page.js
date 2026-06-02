@@ -89,6 +89,17 @@ const PredictPage = () => {
     }
   };
 
+  const uploadWithTimeout = (fileName, file) => {
+    const uploadPromise = supabase.storage.from('farm-images').upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: true
+    });
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Supabase direct upload timed out after 15 seconds.")), 15000)
+    );
+    return Promise.race([uploadPromise, timeoutPromise]);
+  };
+
   // 3. Compile everything and query backend
   const executeAnalysis = async () => {
     if (!coords) {
@@ -131,12 +142,7 @@ const PredictPage = () => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${user.id}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
         
-        const { data, error: uploadError } = await supabase.storage
-          .from('farm-images')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: true
-          });
+        const { data, error: uploadError } = await uploadWithTimeout(fileName, file);
 
         if (uploadError) {
           console.error("Supabase direct upload failed:", uploadError.message);
