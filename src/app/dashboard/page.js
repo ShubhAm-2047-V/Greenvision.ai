@@ -158,8 +158,8 @@ const DashboardPage = () => {
           { label: "Weather Condition", val: latestPred?.weather_data?.conditions || 'Stable', icon: "sun", col: "#f59e0b" },
           { label: "Disease Alerts", val: stats?.diseasesCount || 0, icon: "camera", col: "#e11d48" }
         ].map((s, i) => (
-          <div key={i} className="sk-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '16px', borderRadius: '50%', color: s.col }}>
+          <div key={i} className="sk-card anim-slide-up" style={{ display: 'flex', alignItems: 'center', gap: '16px', animationDelay: \`\${i * 0.1}s\` }}>
+            <div className="anim-pop" style={{ background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)', padding: '16px', borderRadius: '50%', color: s.col }}>
               <Icon name={s.icon} />
             </div>
             <div>
@@ -171,7 +171,7 @@ const DashboardPage = () => {
       </div>
 
       {latestPred && (
-        <div className="sk-card" style={{ background: 'var(--grad-convex)' }}>
+        <div className="sk-card anim-slide-up" style={{ background: 'var(--grad-convex)', animationDelay: '0.4s' }}>
           <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', color: 'var(--primary)', letterSpacing: '1px' }}>Latest Analysis</span>
           <h2 style={{ margin: '8px 0', fontSize: '28px', color: 'var(--primary-dark)' }}>Recommended Crop: <span style={{ color: 'var(--primary)' }}>{latestPred.crop}</span></h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6, maxWidth: '800px' }}>{latestPred.explanation}</p>

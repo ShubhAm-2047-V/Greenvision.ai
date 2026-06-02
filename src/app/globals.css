@@ -145,3 +145,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .sk-button:disabled, .sk-button-primary:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
+
+/* --- CRAZY ANIMATIONS --- */
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+@keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(74, 124, 89, 0.7), 4px 4px 8px rgba(42, 92, 57, 0.4), -4px -4px 8px rgba(255, 255, 255, 0.5); } 70% { box-shadow: 0 0 0 12px rgba(74, 124, 89, 0), 4px 4px 8px rgba(42, 92, 57, 0.4), -4px -4px 8px rgba(255, 255, 255, 0.5); } 100% { box-shadow: 0 0 0 0 rgba(74, 124, 89, 0), 4px 4px 8px rgba(42, 92, 57, 0.4), -4px -4px 8px rgba(255, 255, 255, 0.5); } }
+@keyframes slideUpFade { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+
+.anim-float { animation: float 3s ease-in-out infinite; }
+.anim-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+.sk-card { animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.sk-button { transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s; }
+.sk-button:hover:not(:disabled) { transform: translateY(-3px) scale(1.03); }
+.sk-button:active:not(:disabled) { transform: translateY(2px) scale(0.97); }
+
+.sk-button-primary { animation: pulseGlow 2.5s infinite; }
+

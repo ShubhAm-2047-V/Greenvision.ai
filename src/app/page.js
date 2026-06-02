@@ -67,8 +67,8 @@ export default function LandingPage() {
 
         {/* Hero Visual Card */}
         <div style={{ flex: '1 1 280px', display: 'flex', justifyContent: 'center' }}>
-          <div className="sk-card" style={{ width: '100%', maxWidth: '480px', position: 'relative', background: 'var(--grad-convex)' }}>
-            <div style={{ fontSize: '4rem', marginBottom: '16px', filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.2))' }}>🌾</div>
+          <div className="sk-card anim-pop" style={{ width: '100%', maxWidth: '480px', position: 'relative', background: 'var(--grad-convex)' }}>
+            <div className="anim-float" style={{ fontSize: '4rem', marginBottom: '16px', filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.2))' }}>🌾</div>
             <div style={{ fontSize: '12px', color: 'var(--primary-dark)', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '2px' }}>
               Latest AI Analysis
             </div>
@@ -120,7 +120,7 @@ export default function LandingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           {features.map((f) => (
             <div key={f.title} className="sk-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ fontSize: '48px', filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.15))' }}>{f.icon}</div>
+              <div className="anim-float" style={{ fontSize: '48px', filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.15))' }}>{f.icon}</div>
               <h3>{f.title}</h3>
               <p style={{ color: 'var(--text-muted)' }}>{f.desc}</p>
               <Link href={f.link} style={{ textDecoration: 'none', color: 'var(--primary)', fontWeight: 'bold' }}>
