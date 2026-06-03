@@ -48,7 +48,7 @@ export const sendReportEmail = async (toEmail, farm, prediction) => {
 
   try {
     const info = await transporter.sendMail({
-      from: \`"AgroMind AI" <\${process.env.SMTP_USER}>\`,
+      from: `"AgroMind AI" <${process.env.SMTP_USER}>`,
       to: toEmail,
       subject: subject,
       html: htmlContent,
