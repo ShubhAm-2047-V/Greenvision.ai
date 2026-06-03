@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import PDFDocument from 'pdfkit';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { supabaseAdmin } from '../../../../../lib/supabase';
 
 export async function GET(request, { params }) {
@@ -16,92 +16,115 @@ export async function GET(request, { params }) {
       return NextResponse.json({ message: "Report not found" }, { status: 404 });
     }
 
-    // Generate the PDF
-    const doc = new PDFDocument({ margin: 50, size: 'A4' });
-    const buffers = [];
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([595, 842]); // A4 size
+    const { width, height } = page.getSize();
+    
+    // Embed standard fonts without relying on the filesystem
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // Collect data chunks
-    doc.on('data', buffers.push.bind(buffers));
+    // Helpers
+    const primaryColor = rgb(16/255, 185/255, 129/255);
+    const black = rgb(0, 0, 0);
+    const gray = rgb(0.33, 0.33, 0.33);
 
-    return new Promise((resolve, reject) => {
-      doc.on('end', () => {
-        const pdfData = Buffer.concat(buffers);
-        resolve(
-          new Response(pdfData, {
-            status: 200,
-            headers: {
-              'Content-Type': 'application/pdf',
-              'Content-Disposition': `inline; filename="AgroMind_Report_${id}.pdf"`,
-            },
-          })
-        );
-      });
+    let y = height - 50;
 
-      doc.on('error', (err) => {
-        reject(err);
-      });
+    // Title
+    page.drawText('AgroMind AI', { x: width / 2 - 70, y, size: 24, font: boldFont, color: primaryColor });
+    y -= 30;
+    page.drawText('Agronomic Analysis Report', { x: width / 2 - 100, y, size: 16, font: boldFont, color: gray });
+    y -= 40;
 
-      try {
-        // PDF Content
-        doc.fontSize(24).fillColor('#10b981').text('AgroMind AI', { align: 'center' });
-        doc.fontSize(16).fillColor('#333333').text('Agronomic Analysis Report', { align: 'center' });
-        doc.moveDown(2);
+    // Farm Details
+    let farmName = 'Unknown Farm';
+    if (prediction.farms) {
+      if (Array.isArray(prediction.farms) && prediction.farms.length > 0) farmName = prediction.farms[0].name;
+      else if (!Array.isArray(prediction.farms)) farmName = prediction.farms.name;
+    }
 
-        // Farm Details
-        let farmName = 'Unknown Farm';
-        if (prediction.farms) {
-          if (Array.isArray(prediction.farms) && prediction.farms.length > 0) farmName = prediction.farms[0].name;
-          else if (!Array.isArray(prediction.farms)) farmName = prediction.farms.name;
-        }
-        
-        doc.fontSize(14).fillColor('#10b981').text('Farm Profile');
-        doc.fontSize(10).fillColor('#000000');
-        doc.text(`Farm Name: ${farmName || 'Unknown Farm'}`);
-        doc.text(`Location: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`);
-        doc.moveDown(1);
+    page.drawText('Farm Profile', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
+    y -= 20;
+    page.drawText(`Farm Name: ${farmName}`, { x: 50, y, size: 10, font, color: black });
+    y -= 15;
+    page.drawText(`Location: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`, { x: 50, y, size: 10, font, color: black });
+    y -= 30;
 
-        // AI Recommendation
-        doc.fontSize(14).fillColor('#10b981').text('AI Recommendation');
-        doc.fontSize(10).fillColor('#000000');
-        doc.text(`Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}`);
-        doc.text(`Confidence Score: ${prediction.confidence || 0}%`);
-        doc.text(`Expected Yield: ${prediction.expected_yield || 'N/A'}`);
-        doc.text(`Expected Profit: ${prediction.expected_profit || 'N/A'}`);
-        doc.moveDown(1);
+    // AI Recommendation
+    page.drawText('AI Recommendation', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
+    y -= 20;
+    page.drawText(`Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}`, { x: 50, y, size: 10, font, color: black });
+    y -= 15;
+    page.drawText(`Confidence Score: ${prediction.confidence || 0}%`, { x: 50, y, size: 10, font, color: black });
+    y -= 15;
+    page.drawText(`Expected Yield: ${prediction.expected_yield || 'N/A'}`, { x: 50, y, size: 10, font, color: black });
+    y -= 15;
+    page.drawText(`Expected Profit: ${prediction.expected_profit || 'N/A'}`, { x: 50, y, size: 10, font, color: black });
+    y -= 30;
 
-        // Health Scores
-        doc.fontSize(14).fillColor('#10b981').text('Health Diagnostics');
-        doc.fontSize(10).fillColor('#000000');
-        doc.text(`Farm Health Score: ${prediction.farm_health_score || 0}/100`);
-        doc.text(`Soil Health Score: ${prediction.soil_health_score || 0}/100`);
-        doc.moveDown(1);
+    // Health Diagnostics
+    page.drawText('Health Diagnostics', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
+    y -= 20;
+    page.drawText(`Farm Health Score: ${prediction.farm_health_score || 0}/100`, { x: 50, y, size: 10, font, color: black });
+    y -= 15;
+    page.drawText(`Soil Health Score: ${prediction.soil_health_score || 0}/100`, { x: 50, y, size: 10, font, color: black });
+    y -= 30;
 
-        // Environmental Data
-        if (prediction.weather_data) {
-          doc.fontSize(14).fillColor('#10b981').text('Environmental Baselines');
-          doc.fontSize(10).fillColor('#000000');
-          doc.text(`Temperature: ${prediction.weather_data.temperature || 'N/A'}°C`);
-          doc.text(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm`);
-          doc.text(`Soil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg`);
-          doc.text(`Soil pH: ${prediction.ph || 'N/A'}`);
-          doc.moveDown(1);
-        }
+    // Environmental
+    if (prediction.weather_data) {
+      page.drawText('Environmental Baselines', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
+      y -= 20;
+      page.drawText(`Temperature: ${prediction.weather_data.temperature || 'N/A'} C`, { x: 50, y, size: 10, font, color: black });
+      y -= 15;
+      page.drawText(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm`, { x: 50, y, size: 10, font, color: black });
+      y -= 15;
+      page.drawText(`Soil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg`, { x: 50, y, size: 10, font, color: black });
+      y -= 15;
+      page.drawText(`Soil pH: ${prediction.ph || 'N/A'}`, { x: 50, y, size: 10, font, color: black });
+      y -= 30;
+    }
 
-        // Expert Explanation
-        doc.fontSize(14).fillColor('#10b981').text('Expert Insights');
-        doc.fontSize(10).fillColor('#333333');
-        doc.text(String(prediction.explanation || 'No detailed insights available.'), { align: 'justify', lineGap: 2 });
-        
-        doc.moveDown(3);
-        doc.fontSize(8).fillColor('#888888').text('Report auto-generated by AgroMind AI Platform.', { align: 'center' });
-
-        doc.end();
-      } catch (docErr) {
-        reject(docErr);
+    // Expert Insights
+    page.drawText('Expert Insights', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
+    y -= 20;
+    
+    // Primitive text wrapping logic for the explanation
+    const words = String(prediction.explanation || 'No detailed insights available.').split(' ');
+    let currentLine = '';
+    for (const word of words) {
+      const testLine = currentLine + word + ' ';
+      const textWidth = font.widthOfTextAtSize(testLine, 10);
+      
+      // If adding this word exceeds page width, print the line and start a new one
+      if (textWidth > width - 100) {
+        page.drawText(currentLine, { x: 50, y, size: 10, font, color: gray });
+        y -= 15;
+        currentLine = word + ' ';
+      } else {
+        currentLine = testLine;
       }
+    }
+    // Print the final line
+    if (currentLine) {
+      page.drawText(currentLine, { x: 50, y, size: 10, font, color: gray });
+    }
+
+    y -= 40;
+    page.drawText('Report auto-generated by AgroMind AI Platform.', { x: width / 2 - 100, y: 50, size: 8, font, color: rgb(0.5, 0.5, 0.5) });
+
+    // Save as Uint8Array bytes
+    const pdfBytes = await pdfDoc.save();
+
+    return new Response(pdfBytes, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="AgroMind_Report_${id}.pdf"`,
+      },
     });
   } catch (err) {
     console.error("PDF generation failed:", err);
-    return NextResponse.json({ message: "Internal server error during PDF generation", error: String(err.message), stack: String(err.stack) }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error during PDF generation", error: String(err.message) }, { status: 500 });
   }
 }
