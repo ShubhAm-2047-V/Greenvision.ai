@@ -201,8 +201,9 @@ export async function POST(request) {
     if (predError) throw new Error("Database prediction log insertion failed: " + predError.message);
 
     // Asynchronously send the report email if we have the user's email
+    // IMPORTANT: Await the email so Vercel lambda doesn't kill the process before it sends
     if (user_email) {
-      sendReportEmail(user_email, farm, prediction).catch(err => {
+      await sendReportEmail(user_email, farm, prediction).catch(err => {
         console.error("Failed to send async report email:", err);
       });
     }

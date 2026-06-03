@@ -23,11 +23,11 @@ export async function GET(request, { params }) {
     // Collect data chunks
     doc.on('data', buffers.push.bind(buffers));
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       doc.on('end', () => {
         const pdfData = Buffer.concat(buffers);
         resolve(
-          new NextResponse(pdfData, {
+          new Response(pdfData, {
             status: 200,
             headers: {
               'Content-Type': 'application/pdf',
@@ -37,57 +37,71 @@ export async function GET(request, { params }) {
         );
       });
 
-      // PDF Content
-      doc.fontSize(24).fillColor('#10b981').text('AgroMind AI', { align: 'center' });
-      doc.fontSize(16).fillColor('#333333').text('Agronomic Analysis Report', { align: 'center' });
-      doc.moveDown(2);
+      doc.on('error', (err) => {
+        reject(err);
+      });
 
-      // Farm Details
-      doc.fontSize(14).fillColor('#10b981').text('Farm Profile');
-      doc.fontSize(10).fillColor('#000000');
-      doc.text(`Farm Name: ${prediction.farms?.name || 'Unknown Farm'}`);
-      doc.text(`Location: ${prediction.village}, ${prediction.district}, ${prediction.state}`);
-      doc.moveDown(1);
+      try {
+        // PDF Content
+        doc.fontSize(24).fillColor('#10b981').text('AgroMind AI', { align: 'center' });
+        doc.fontSize(16).fillColor('#333333').text('Agronomic Analysis Report', { align: 'center' });
+        doc.moveDown(2);
 
-      // AI Recommendation
-      doc.fontSize(14).fillColor('#10b981').text('AI Recommendation');
-      doc.fontSize(10).fillColor('#000000');
-      doc.text(`Recommended Crop: ${prediction.crop.toUpperCase()}`);
-      doc.text(`Confidence Score: ${prediction.confidence}%`);
-      doc.text(`Expected Yield: ${prediction.expected_yield}`);
-      doc.text(`Expected Profit: ${prediction.expected_profit}`);
-      doc.moveDown(1);
-
-      // Health Scores
-      doc.fontSize(14).fillColor('#10b981').text('Health Diagnostics');
-      doc.fontSize(10).fillColor('#000000');
-      doc.text(`Farm Health Score: ${prediction.farm_health_score}/100`);
-      doc.text(`Soil Health Score: ${prediction.soil_health_score}/100`);
-      doc.moveDown(1);
-
-      // Environmental Data
-      if (prediction.weather_data) {
-        doc.fontSize(14).fillColor('#10b981').text('Environmental Baselines');
+        // Farm Details
+        let farmName = 'Unknown Farm';
+        if (prediction.farms) {
+          if (Array.isArray(prediction.farms) && prediction.farms.length > 0) farmName = prediction.farms[0].name;
+          else if (!Array.isArray(prediction.farms)) farmName = prediction.farms.name;
+        }
+        
+        doc.fontSize(14).fillColor('#10b981').text('Farm Profile');
         doc.fontSize(10).fillColor('#000000');
-        doc.text(`Temperature: ${prediction.weather_data.temperature}°C`);
-        doc.text(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall} mm`);
-        doc.text(`Soil Nitrogen: ${prediction.nitrogen} g/kg`);
-        doc.text(`Soil pH: ${prediction.ph}`);
+        doc.text(`Farm Name: ${farmName || 'Unknown Farm'}`);
+        doc.text(`Location: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`);
         doc.moveDown(1);
+
+        // AI Recommendation
+        doc.fontSize(14).fillColor('#10b981').text('AI Recommendation');
+        doc.fontSize(10).fillColor('#000000');
+        doc.text(`Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}`);
+        doc.text(`Confidence Score: ${prediction.confidence || 0}%`);
+        doc.text(`Expected Yield: ${prediction.expected_yield || 'N/A'}`);
+        doc.text(`Expected Profit: ${prediction.expected_profit || 'N/A'}`);
+        doc.moveDown(1);
+
+        // Health Scores
+        doc.fontSize(14).fillColor('#10b981').text('Health Diagnostics');
+        doc.fontSize(10).fillColor('#000000');
+        doc.text(`Farm Health Score: ${prediction.farm_health_score || 0}/100`);
+        doc.text(`Soil Health Score: ${prediction.soil_health_score || 0}/100`);
+        doc.moveDown(1);
+
+        // Environmental Data
+        if (prediction.weather_data) {
+          doc.fontSize(14).fillColor('#10b981').text('Environmental Baselines');
+          doc.fontSize(10).fillColor('#000000');
+          doc.text(`Temperature: ${prediction.weather_data.temperature || 'N/A'}°C`);
+          doc.text(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm`);
+          doc.text(`Soil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg`);
+          doc.text(`Soil pH: ${prediction.ph || 'N/A'}`);
+          doc.moveDown(1);
+        }
+
+        // Expert Explanation
+        doc.fontSize(14).fillColor('#10b981').text('Expert Insights');
+        doc.fontSize(10).fillColor('#333333');
+        doc.text(String(prediction.explanation || 'No detailed insights available.'), { align: 'justify', lineGap: 2 });
+        
+        doc.moveDown(3);
+        doc.fontSize(8).fillColor('#888888').text('Report auto-generated by AgroMind AI Platform.', { align: 'center' });
+
+        doc.end();
+      } catch (docErr) {
+        reject(docErr);
       }
-
-      // Expert Explanation
-      doc.fontSize(14).fillColor('#10b981').text('Expert Insights');
-      doc.fontSize(10).fillColor('#333333');
-      doc.text(prediction.explanation, { align: 'justify', lineGap: 2 });
-      
-      doc.moveDown(3);
-      doc.fontSize(8).fillColor('#888888').text('Report auto-generated by AgroMind AI Platform.', { align: 'center' });
-
-      doc.end();
     });
   } catch (err) {
     console.error("PDF generation failed:", err);
-    return NextResponse.json({ message: "Internal server error during PDF generation" }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error during PDF generation", error: String(err.message), stack: String(err.stack) }, { status: 500 });
   }
 }
