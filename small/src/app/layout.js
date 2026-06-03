@@ -22,6 +22,9 @@ export default function RootLayout({ children }) {
             <main style={{ flex: 1, width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', paddingBottom: '100px' }}>
               {children}
             </main>
+            <footer style={{ textAlign: 'center', padding: '20px', paddingBottom: '40px', color: '#6b7280', fontSize: '14px', marginTop: 'auto' }}>
+              Created by ShubDeep Labs
+            </footer>
             <BottomNav />
           </div>
         </TranslationProvider>
