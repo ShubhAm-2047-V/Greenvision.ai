@@ -167,7 +167,10 @@ const AppContent = () => {
             <Sprout className="w-5 h-5 text-primary" />
             <span>{t('brand')}</span>
           </div>
-          <p>© {new Date().getFullYear()} {t('brand')}. All rights reserved.</p>
+          <div className="text-center sm:text-right">
+            <p>© {new Date().getFullYear()} {t('brand')}. All rights reserved.</p>
+            <p className="mt-1 font-semibold text-primary dark:text-primary-light">Created by ShubDeep Labs</p>
+          </div>
         </div>
       </footer>
 
