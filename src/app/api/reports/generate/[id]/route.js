@@ -31,7 +31,7 @@ export async function GET(request, { params }) {
             status: 200,
             headers: {
               'Content-Type': 'application/pdf',
-              'Content-Disposition': \`inline; filename="AgroMind_Report_\${id}.pdf"\`,
+              'Content-Disposition': `inline; filename="AgroMind_Report_${id}.pdf"`,
             },
           })
         );
@@ -45,34 +45,34 @@ export async function GET(request, { params }) {
       // Farm Details
       doc.fontSize(14).fillColor('#10b981').text('Farm Profile');
       doc.fontSize(10).fillColor('#000000');
-      doc.text(\`Farm Name: \${prediction.farms?.name || 'Unknown Farm'}\`);
-      doc.text(\`Location: \${prediction.village}, \${prediction.district}, \${prediction.state}\`);
+      doc.text(`Farm Name: ${prediction.farms?.name || 'Unknown Farm'}`);
+      doc.text(`Location: ${prediction.village}, ${prediction.district}, ${prediction.state}`);
       doc.moveDown(1);
 
       // AI Recommendation
       doc.fontSize(14).fillColor('#10b981').text('AI Recommendation');
       doc.fontSize(10).fillColor('#000000');
-      doc.text(\`Recommended Crop: \${prediction.crop.toUpperCase()}\`);
-      doc.text(\`Confidence Score: \${prediction.confidence}%\`);
-      doc.text(\`Expected Yield: \${prediction.expected_yield}\`);
-      doc.text(\`Expected Profit: \${prediction.expected_profit}\`);
+      doc.text(`Recommended Crop: ${prediction.crop.toUpperCase()}`);
+      doc.text(`Confidence Score: ${prediction.confidence}%`);
+      doc.text(`Expected Yield: ${prediction.expected_yield}`);
+      doc.text(`Expected Profit: ${prediction.expected_profit}`);
       doc.moveDown(1);
 
       // Health Scores
       doc.fontSize(14).fillColor('#10b981').text('Health Diagnostics');
       doc.fontSize(10).fillColor('#000000');
-      doc.text(\`Farm Health Score: \${prediction.farm_health_score}/100\`);
-      doc.text(\`Soil Health Score: \${prediction.soil_health_score}/100\`);
+      doc.text(`Farm Health Score: ${prediction.farm_health_score}/100`);
+      doc.text(`Soil Health Score: ${prediction.soil_health_score}/100`);
       doc.moveDown(1);
 
       // Environmental Data
       if (prediction.weather_data) {
         doc.fontSize(14).fillColor('#10b981').text('Environmental Baselines');
         doc.fontSize(10).fillColor('#000000');
-        doc.text(\`Temperature: \${prediction.weather_data.temperature}°C\`);
-        doc.text(\`Rainfall (Monthly Avg): \${prediction.weather_data.rainfall} mm\`);
-        doc.text(\`Soil Nitrogen: \${prediction.nitrogen} g/kg\`);
-        doc.text(\`Soil pH: \${prediction.ph}\`);
+        doc.text(`Temperature: ${prediction.weather_data.temperature}°C`);
+        doc.text(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall} mm`);
+        doc.text(`Soil Nitrogen: ${prediction.nitrogen} g/kg`);
+        doc.text(`Soil pH: ${prediction.ph}`);
         doc.moveDown(1);
       }
 
