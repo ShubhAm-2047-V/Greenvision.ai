@@ -134,6 +134,11 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ══ COMPANY FOOTER ══ */}
+      <div style={{ textAlign: 'center', padding: '40px 16px', fontSize: '18px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
+        Created by ShubDeep Labs
+      </div>
     </div>
   );
 }
