@@ -145,7 +145,18 @@ export async function POST(request) {
 
       Provide: Farm Health Score (0-100), Soil Health Score (0-100), Top Crop Recommendations, Yield Forecast, Profit Forecast, Fertilizer Plan, Irrigation Plan, Farming Recommendations.
 
-      You MUST respond ONLY with a valid JSON object matching the detailed schema (farm_health_score, crop, expected_yield, etc). Do not enclose the JSON inside markdown code blocks.
+      You MUST respond ONLY with a valid JSON object matching this exact schema:
+      {
+        "crop": "String (Main recommended crop name)",
+        "confidence": Number (0-100),
+        "expected_yield": "String (e.g., 30 Tons/Hectare)",
+        "expected_revenue": "String (e.g., $5000)",
+        "expected_profit": "String (e.g., $3000)",
+        "explanation": "String (A comprehensive, easily readable paragraph summarizing the soil condition, weather, visual findings, fertilizer plan, irrigation plan, and why this crop is recommended. Format it as plain text without any JSON or arrays.)",
+        "farm_health_score": Number (0-100),
+        "soil_health_score": Number (0-100)
+      }
+      Do not enclose the JSON inside markdown code blocks.
     `;
 
     contents.push(prompt);
