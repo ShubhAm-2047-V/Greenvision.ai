@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { generatePdfBuffer } from './pdfGenerator';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -47,11 +48,21 @@ export const sendReportEmail = async (toEmail, farm, prediction) => {
   `;
 
   try {
+    const pdfBuffer = await generatePdfBuffer(prediction, farm.name);
+    const pdfBufferNode = Buffer.from(pdfBuffer); // Ensure it's a Node Buffer for nodemailer
+
     const info = await transporter.sendMail({
       from: `"AgroMind AI" <${process.env.SMTP_USER}>`,
       to: toEmail,
       subject: subject,
       html: htmlContent,
+      attachments: [
+        {
+          filename: `AgroMind_Report_${farm.name.replace(/\s+/g, '_')}.pdf`,
+          content: pdfBufferNode,
+          contentType: 'application/pdf',
+        },
+      ],
     });
     console.log("Email sent successfully: ", info.messageId);
     return info;
