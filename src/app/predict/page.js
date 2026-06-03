@@ -198,6 +198,7 @@ const PredictPage = () => {
         lat: coords.lat,
         lon: coords.lon,
         user_id: user.id,
+        user_email: user.email,
         farm_name: farmName,
         image_urls: uploadedUrls,
         image_base64s: useBase64Fallback ? validBase64Images : []

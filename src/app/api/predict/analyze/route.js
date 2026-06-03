@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { GoogleGenAI } from '@google/genai';
 import { supabaseAdmin } from '../../../../lib/supabase';
+import { sendReportEmail } from '../../../../lib/mailer';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -87,7 +88,7 @@ async function getSoilGridsData(lat, lon) {
 
 export async function POST(request) {
   try {
-    const { lat, lon, user_id, farm_name = "My Smart Farm", image_urls = [], image_base64s = [] } = await request.json();
+    const { lat, lon, user_id, user_email, farm_name = "My Smart Farm", image_urls = [], image_base64s = [] } = await request.json();
 
     if (!lat || !lon || !user_id) {
       return NextResponse.json({ message: "Latitude, longitude, and user_id are required." }, { status: 400 });
@@ -198,6 +199,13 @@ export async function POST(request) {
     }).select().single();
 
     if (predError) throw new Error("Database prediction log insertion failed: " + predError.message);
+
+    // Asynchronously send the report email if we have the user's email
+    if (user_email) {
+      sendReportEmail(user_email, farm, prediction).catch(err => {
+        console.error("Failed to send async report email:", err);
+      });
+    }
 
     return NextResponse.json({ message: "Automated farm analysis completed successfully.", farm, prediction, vision_summary: "Multimodal agronomic analysis completed successfully." });
   } catch (err) {
