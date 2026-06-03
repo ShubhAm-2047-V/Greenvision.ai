@@ -224,13 +224,11 @@ const PredictPage = () => {
     if (!result?.id) return;
     setPdfDownloading(true);
     try {
-      const res = await getReportUrl(result.id);
-      const url = res.data.report_url;
-      window.open(url, '_blank');
+      window.open(`/api/reports/generate/${result.id}`, '_blank');
     } catch (err) {
       alert("PDF report download failed. Please try again.");
     } finally {
-      setPdfDownloading(false);
+      setTimeout(() => setPdfDownloading(false), 1500);
     }
   };
 
