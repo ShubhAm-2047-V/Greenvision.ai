@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import PDFDocument from 'pdfkit';
-import { supabaseAdmin } from '../../../../../../lib/supabase';
+import { supabaseAdmin } from '../../../../../lib/supabase';
 
 export async function GET(request, { params }) {
   const { id } = params;
