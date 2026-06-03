@@ -17,7 +17,6 @@ const BottomNav = () => {
   const links = [
     { href: '/dashboard', label: t('dashboard'), icon: 'activity' },
     { href: '/predict', label: t('predict'), icon: 'sprout' },
-    { href: '/disease', label: t('disease'), icon: 'camera' },
     { href: '/advisor', label: t('advisor'), icon: 'message-square' }
   ];
 
