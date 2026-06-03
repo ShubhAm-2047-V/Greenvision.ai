@@ -60,6 +60,9 @@ export default function LandingPage() {
             <Link href="/register" className="sk-button" style={{ textDecoration: 'none', padding: '16px 32px', fontSize: '16px' }}>
               {t('landing_hero_btn2')}
             </Link>
+            <a href="/BlackBook.html" target="_blank" rel="noopener noreferrer" className="sk-button" style={{ textDecoration: 'none', padding: '16px 32px', fontSize: '16px', border: '1px solid var(--primary)', color: 'var(--primary)' }}>
+              📘 View Project Black Book
+            </a>
           </div>
         </div>
 
