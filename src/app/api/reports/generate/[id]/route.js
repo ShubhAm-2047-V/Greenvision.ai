@@ -17,8 +17,6 @@ export async function GET(request, { params }) {
     }
 
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]); // A4 size
-    const { width, height } = page.getSize();
     
     // Embed standard fonts
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -30,22 +28,70 @@ export async function GET(request, { params }) {
     const textDark = rgb(31/255, 41/255, 55/255); // #1f2937 Dark text for readability
     const textMuted = rgb(75/255, 85/255, 99/255); // #4b5563 Muted gray text
 
-    // Draw full page warm white background
-    page.drawRectangle({
-      x: 0,
-      y: 0,
-      width,
-      height,
-      color: bgColor,
-    });
+    let page;
+    let width, height;
+    let y;
 
-    let y = height - 50;
+    const addNewPage = () => {
+      page = pdfDoc.addPage([595, 842]); // A4 Size
+      width = page.getSize().width;
+      height = page.getSize().height;
+      page.drawRectangle({ x: 0, y: 0, width, height, color: bgColor });
+      y = height - 50;
+    };
+
+    addNewPage();
+
+    const checkPageBreak = (spaceNeeded) => {
+      if (y - spaceNeeded < 50) {
+        addNewPage();
+      }
+    };
+
+    const writeText = (text, size, textFont, color, align = 'left') => {
+      if (!text) return;
+      const lines = String(text).split('\n');
+      for (const line of lines) {
+        const words = line.split(' ');
+        let currentLine = '';
+        for (const word of words) {
+          const testLine = currentLine + word + ' ';
+          const textWidth = textFont.widthOfTextAtSize(testLine, size);
+          
+          if (textWidth > width - 100) {
+            checkPageBreak(size * 1.5);
+            const xPos = align === 'center' ? (width - textFont.widthOfTextAtSize(currentLine.trim(), size)) / 2 : 50;
+            page.drawText(currentLine.trim(), { x: xPos, y, size, font: textFont, color });
+            y -= size * 1.5;
+            currentLine = word + ' ';
+          } else {
+            currentLine = testLine;
+          }
+        }
+        if (currentLine.trim()) {
+          checkPageBreak(size * 1.5);
+          const xPos = align === 'center' ? (width - textFont.widthOfTextAtSize(currentLine.trim(), size)) / 2 : 50;
+          page.drawText(currentLine.trim(), { x: xPos, y, size, font: textFont, color });
+          y -= size * 1.5;
+        }
+      }
+    };
+
+    const addSection = (title, content) => {
+      if (!content || content.trim() === '') return;
+      checkPageBreak(40);
+      y -= 10;
+      writeText(title, 14, boldFont, primaryColor);
+      y -= 5;
+      writeText(content, 10, font, textDark);
+      y -= 15;
+    };
 
     // Title
-    page.drawText('AgroMind AI', { x: width / 2 - 70, y, size: 24, font: boldFont, color: primaryColor });
-    y -= 30;
-    page.drawText('Agronomic Analysis Report', { x: width / 2 - 100, y, size: 16, font: boldFont, color: textMuted });
-    y -= 40;
+    writeText('AgroMind AI', 24, boldFont, primaryColor, 'center');
+    y -= 5;
+    writeText('Agronomic Analysis Report', 16, boldFont, textMuted, 'center');
+    y -= 20;
 
     // Farm Details
     let farmName = 'Unknown Farm';
@@ -54,72 +100,24 @@ export async function GET(request, { params }) {
       else if (!Array.isArray(prediction.farms)) farmName = prediction.farms.name;
     }
 
-    page.drawText('Farm Profile', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
-    y -= 20;
-    page.drawText(`Farm Name: ${farmName}`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 15;
-    page.drawText(`Location: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 30;
+    addSection('Farm Profile', `Farm Name: ${farmName}\nLocation: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`);
+    addSection('AI Recommendation', `Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}\nConfidence Score: ${prediction.confidence || 0}%\nExpected Yield: ${prediction.expected_yield || 'N/A'}\nExpected Profit: ${prediction.expected_profit || 'N/A'}`);
+    addSection('Health Diagnostics', `Farm Health Score: ${prediction.farm_health_score || 0}/100\nSoil Health Score: ${prediction.soil_health_score || 0}/100`);
 
-    // AI Recommendation
-    page.drawText('AI Recommendation', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
-    y -= 20;
-    page.drawText(`Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 15;
-    page.drawText(`Confidence Score: ${prediction.confidence || 0}%`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 15;
-    page.drawText(`Expected Yield: ${prediction.expected_yield || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 15;
-    page.drawText(`Expected Profit: ${prediction.expected_profit || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 30;
-
-    // Health Diagnostics
-    page.drawText('Health Diagnostics', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
-    y -= 20;
-    page.drawText(`Farm Health Score: ${prediction.farm_health_score || 0}/100`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 15;
-    page.drawText(`Soil Health Score: ${prediction.soil_health_score || 0}/100`, { x: 50, y, size: 10, font, color: textDark });
-    y -= 30;
-
-    // Environmental
     if (prediction.weather_data) {
-      page.drawText('Environmental Baselines', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
-      y -= 20;
-      page.drawText(`Temperature: ${prediction.weather_data.temperature || 'N/A'} C`, { x: 50, y, size: 10, font, color: textDark });
-      y -= 15;
-      page.drawText(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm`, { x: 50, y, size: 10, font, color: textDark });
-      y -= 15;
-      page.drawText(`Soil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg`, { x: 50, y, size: 10, font, color: textDark });
-      y -= 15;
-      page.drawText(`Soil pH: ${prediction.ph || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
-      y -= 30;
+      addSection('Environmental Baselines', `Temperature: ${prediction.weather_data.temperature || 'N/A'} C\nRainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm\nSoil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg\nSoil pH: ${prediction.ph || 'N/A'}`);
     }
 
-    // Expert Insights
-    page.drawText('Expert Insights', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
+    // Detailed JSON Insights
+    addSection('Expert Insights', prediction.explanation);
+    addSection('Soil Analysis', prediction.soil_analysis);
+    addSection('Fertilizer Plan', prediction.fertilizer_plan);
+    addSection('Irrigation Schedule', prediction.irrigation_schedule);
+
+    // Footer
+    checkPageBreak(30);
     y -= 20;
-    
-    // Primitive text wrapping logic
-    const words = String(prediction.explanation || 'No detailed insights available.').split(' ');
-    let currentLine = '';
-    for (const word of words) {
-      const testLine = currentLine + word + ' ';
-      const textWidth = font.widthOfTextAtSize(testLine, 10);
-      
-      if (textWidth > width - 100) {
-        page.drawText(currentLine, { x: 50, y, size: 10, font, color: textMuted });
-        y -= 15;
-        currentLine = word + ' ';
-      } else {
-        currentLine = testLine;
-      }
-    }
-    if (currentLine) {
-      page.drawText(currentLine, { x: 50, y, size: 10, font, color: textMuted });
-    }
-
-    y -= 40;
-    page.drawText('Report auto-generated by AgroMind AI Platform.', { x: width / 2 - 100, y: 50, size: 8, font, color: textMuted });
+    writeText('Report auto-generated by AgroMind AI Platform.', 8, font, textMuted, 'center');
 
     // Save as Uint8Array bytes
     const pdfBytes = await pdfDoc.save();

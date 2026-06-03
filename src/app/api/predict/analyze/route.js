@@ -4,6 +4,8 @@ import { GoogleGenAI } from '@google/genai';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { sendReportEmail } from '../../../../lib/mailer';
 
+export const maxDuration = 60; // Allow Vercel to run this function for up to 60 seconds
+
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // HELPER: Fetch Geocoding
@@ -156,7 +158,7 @@ export async function POST(request) {
     });
 
     const geminiTimeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), 8000)
+      setTimeout(() => reject(new Error("Timeout")), 30000)
     );
 
     const [farmResult, geminiResult] = await Promise.all([
