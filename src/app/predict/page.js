@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, supabase } from '../../context/AuthContext';
 import { useTranslation } from '../../context/TranslationContext';
@@ -34,6 +34,10 @@ const PredictPage = () => {
   const [coords, setCoords] = useState(null);
   const [locLoading, setLocLoading] = useState(false);
   const [locationSuccess, setLocationSuccess] = useState(false);
+
+  const [showImageOptions, setShowImageOptions] = useState(false);
+  const fileInputRefGallery = useRef(null);
+  const fileInputRefCamera = useRef(null);
 
   React.useEffect(() => {
     const saved = localStorage.getItem('agromind_coords');
@@ -73,6 +77,7 @@ const PredictPage = () => {
       const filePreviews = compressedFiles.map(file => URL.createObjectURL(file));
       setPreviews(prev => [...prev, ...filePreviews]);
     }
+    e.target.value = null;
   };
 
   const removeImage = (index) => {
@@ -266,11 +271,12 @@ const PredictPage = () => {
           </h3>
           <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('predict_s1_desc')}</p>
           
-          <div className="sk-card" style={{ 
+          <div className="sk-card" onClick={() => setShowImageOptions(true)} style={{ 
             border: '2px dashed var(--primary-light)', padding: '40px', textAlign: 'center', 
             position: 'relative', cursor: 'pointer', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)'
           }}>
-            <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} style={{ opacity: 0, position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: 'pointer' }} />
+            <input type="file" multiple accept="image/jpeg,image/png,image/webp" ref={fileInputRefGallery} onChange={handleImageChange} style={{ display: 'none' }} />
+            <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" ref={fileInputRefCamera} onChange={handleImageChange} style={{ display: 'none' }} />
             <Icon name="upload" style={{ width: '48px', height: '48px', color: 'var(--text-muted)', margin: '0 auto 8px' }} />
             <span style={{ fontWeight: 'bold', color: 'var(--text-muted)' }}>{t('predict_s1_drag')}</span>
           </div>
@@ -394,6 +400,30 @@ const PredictPage = () => {
             </div>
 
             <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-muted)' }}>{result.explanation}</p>
+          </div>
+        </div>
+      )}
+      {/* Image Source Popup */}
+      {showImageOptions && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)', zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+        }} onClick={() => setShowImageOptions(false)}>
+          <div className="sk-card anim-slide-up" style={{
+            background: 'var(--bg-color)', padding: '24px', borderRadius: '16px',
+            display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '300px', width: '100%'
+          }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ margin: 0, textAlign: 'center', color: 'var(--primary-dark)' }}>{t('predict_upload_title') || 'Select Image Source'}</h3>
+            <button type="button" className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onClick={() => { setShowImageOptions(false); fileInputRefGallery.current?.click(); }}>
+              <Icon name="upload" /> Upload from Gallery
+            </button>
+            <button type="button" className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--primary-dark)' }} onClick={() => { setShowImageOptions(false); fileInputRefCamera.current?.click(); }}>
+              <Icon name="camera" /> Take Photo
+            </button>
+            <button type="button" style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginTop: '8px', fontWeight: 'bold' }} onClick={() => setShowImageOptions(false)}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
