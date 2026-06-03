@@ -24,13 +24,13 @@ export async function GET(request, { params }) {
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // Theme Colors (Dark Theme to match AgroMind AI website)
-    const bgColor = rgb(17/255, 24/255, 39/255); // #111827 Dark background
+    // Theme Colors (Warm White Theme to match AgroMind AI website)
+    const bgColor = rgb(250/255, 248/255, 245/255); // #faf8f5 Warm White background
     const primaryColor = rgb(16/255, 185/255, 129/255); // #10b981 Emerald Green accent
-    const textLight = rgb(243/255, 244/255, 246/255); // #f3f4f6 Light text
-    const textMuted = rgb(156/255, 163/255, 175/255); // #9ca3af Muted gray text
+    const textDark = rgb(31/255, 41/255, 55/255); // #1f2937 Dark text for readability
+    const textMuted = rgb(75/255, 85/255, 99/255); // #4b5563 Muted gray text
 
-    // Draw full page dark background
+    // Draw full page warm white background
     page.drawRectangle({
       x: 0,
       y: 0,
@@ -56,42 +56,42 @@ export async function GET(request, { params }) {
 
     page.drawText('Farm Profile', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
     y -= 20;
-    page.drawText(`Farm Name: ${farmName}`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Farm Name: ${farmName}`, { x: 50, y, size: 10, font, color: textDark });
     y -= 15;
-    page.drawText(`Location: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Location: ${prediction.village || 'N/A'}, ${prediction.district || 'N/A'}, ${prediction.state || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
     y -= 30;
 
     // AI Recommendation
     page.drawText('AI Recommendation', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
     y -= 20;
-    page.drawText(`Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Recommended Crop: ${String(prediction.crop || 'Unknown').toUpperCase()}`, { x: 50, y, size: 10, font, color: textDark });
     y -= 15;
-    page.drawText(`Confidence Score: ${prediction.confidence || 0}%`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Confidence Score: ${prediction.confidence || 0}%`, { x: 50, y, size: 10, font, color: textDark });
     y -= 15;
-    page.drawText(`Expected Yield: ${prediction.expected_yield || 'N/A'}`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Expected Yield: ${prediction.expected_yield || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
     y -= 15;
-    page.drawText(`Expected Profit: ${prediction.expected_profit || 'N/A'}`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Expected Profit: ${prediction.expected_profit || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
     y -= 30;
 
     // Health Diagnostics
     page.drawText('Health Diagnostics', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
     y -= 20;
-    page.drawText(`Farm Health Score: ${prediction.farm_health_score || 0}/100`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Farm Health Score: ${prediction.farm_health_score || 0}/100`, { x: 50, y, size: 10, font, color: textDark });
     y -= 15;
-    page.drawText(`Soil Health Score: ${prediction.soil_health_score || 0}/100`, { x: 50, y, size: 10, font, color: textLight });
+    page.drawText(`Soil Health Score: ${prediction.soil_health_score || 0}/100`, { x: 50, y, size: 10, font, color: textDark });
     y -= 30;
 
     // Environmental
     if (prediction.weather_data) {
       page.drawText('Environmental Baselines', { x: 50, y, size: 14, font: boldFont, color: primaryColor });
       y -= 20;
-      page.drawText(`Temperature: ${prediction.weather_data.temperature || 'N/A'} C`, { x: 50, y, size: 10, font, color: textLight });
+      page.drawText(`Temperature: ${prediction.weather_data.temperature || 'N/A'} C`, { x: 50, y, size: 10, font, color: textDark });
       y -= 15;
-      page.drawText(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm`, { x: 50, y, size: 10, font, color: textLight });
+      page.drawText(`Rainfall (Monthly Avg): ${prediction.weather_data.rainfall || 'N/A'} mm`, { x: 50, y, size: 10, font, color: textDark });
       y -= 15;
-      page.drawText(`Soil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg`, { x: 50, y, size: 10, font, color: textLight });
+      page.drawText(`Soil Nitrogen: ${prediction.nitrogen || 'N/A'} g/kg`, { x: 50, y, size: 10, font, color: textDark });
       y -= 15;
-      page.drawText(`Soil pH: ${prediction.ph || 'N/A'}`, { x: 50, y, size: 10, font, color: textLight });
+      page.drawText(`Soil pH: ${prediction.ph || 'N/A'}`, { x: 50, y, size: 10, font, color: textDark });
       y -= 30;
     }
 
