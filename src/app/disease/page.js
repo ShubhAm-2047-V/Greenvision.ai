@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from '../../context/TranslationContext';
 import { scanLeafDisease } from '../../services/api';
@@ -17,6 +17,9 @@ const DiseasePage = () => {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [showImageOptions, setShowImageOptions] = useState(false);
+  const fileInputRefGallery = useRef(null);
+  const fileInputRefCamera = useRef(null);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -27,6 +30,7 @@ const DiseasePage = () => {
       setPreview(URL.createObjectURL(compressedFile));
       setResult(null);
     }
+    e.target.value = null;
   };
 
   const handleScan = async (e) => {
@@ -96,12 +100,13 @@ const DiseasePage = () => {
               </select>
             </div>
 
-            <div className="sk-card" style={{ 
+            <div className="sk-card" onClick={() => setShowImageOptions(true)} style={{ 
               border: '2px dashed var(--primary-light)', padding: '24px', textAlign: 'center', 
               position: 'relative', cursor: 'pointer', background: 'var(--bg-color)', boxShadow: 'var(--shadow-in)',
               minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
-              <input type="file" accept="image/*" onChange={handleFileChange} style={{ opacity: 0, position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: 'pointer' }} />
+              <input type="file" accept="image/*" ref={fileInputRefGallery} onChange={handleFileChange} style={{ display: 'none' }} />
+              <input type="file" accept="image/*" capture="environment" ref={fileInputRefCamera} onChange={handleFileChange} style={{ display: 'none' }} />
               
               {preview ? (
                 <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '12px' }}>
@@ -174,6 +179,31 @@ const DiseasePage = () => {
           )}
         </div>
       </div>
+
+      {/* Image Source Popup */}
+      {showImageOptions && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)', zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+        }} onClick={() => setShowImageOptions(false)}>
+          <div className="sk-card anim-slide-up" style={{
+            background: 'var(--bg-color)', padding: '24px', borderRadius: '16px',
+            display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '300px', width: '100%'
+          }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ margin: 0, textAlign: 'center', color: 'var(--primary-dark)' }}>{t('disease_upload_title') || 'Select Image Source'}</h3>
+            <button type="button" className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onClick={() => { setShowImageOptions(false); fileInputRefGallery.current?.click(); }}>
+              <Icon name="upload" /> Upload from Gallery
+            </button>
+            <button type="button" className="sk-button-primary sk-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--primary-dark)' }} onClick={() => { setShowImageOptions(false); fileInputRefCamera.current?.click(); }}>
+              <Icon name="camera" /> Take Photo
+            </button>
+            <button type="button" style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginTop: '8px', fontWeight: 'bold' }} onClick={() => setShowImageOptions(false)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
