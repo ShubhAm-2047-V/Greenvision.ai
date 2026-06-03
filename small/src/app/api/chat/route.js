@@ -19,11 +19,17 @@ export async function POST(request) {
     };
     const targetLanguage = languageMap[locale] || 'English';
 
-    await supabaseAdmin.from('chat_messages').insert({
-      user_id,
-      sender: 'user',
-      text: message
-    });
+    try {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        await supabaseAdmin.from('chat_messages').insert({
+          user_id,
+          sender: 'user',
+          text: message
+        });
+      }
+    } catch (e) {
+      console.warn("Could not log user message to supabase:", e);
+    }
 
     const systemPrompt = `
       You are "AgroMind Assistant", a world-class agricultural expert, agronomist, and farm advisor.
@@ -44,11 +50,17 @@ export async function POST(request) {
 
     const reply = modelResponse.text || "I am sorry, I couldn't formulate a response right now. Please try again.";
 
-    await supabaseAdmin.from('chat_messages').insert({
-      user_id,
-      sender: 'bot',
-      text: reply
-    });
+    try {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        await supabaseAdmin.from('chat_messages').insert({
+          user_id,
+          sender: 'bot',
+          text: reply
+        });
+      }
+    } catch (e) {
+      console.warn("Could not log bot message to supabase:", e);
+    }
 
     return NextResponse.json({
       message: "Reply generated successfully.",

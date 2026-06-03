@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { GoogleGenAI } from '@google/genai';
 import { supabaseAdmin } from '../../../../lib/supabase';
-import { sendReportEmail } from '../../../../lib/mailer';
 
 export const maxDuration = 60; // Allow Vercel to run this function for up to 60 seconds
 
@@ -202,13 +201,7 @@ export async function POST(request) {
 
     if (predError) throw new Error("Database prediction log insertion failed: " + predError.message);
 
-    // Asynchronously send the report email if we have the user's email
-    // IMPORTANT: Await the email so Vercel lambda doesn't kill the process before it sends
-    if (user_email) {
-      await sendReportEmail(user_email, farm, prediction).catch(err => {
-        console.error("Failed to send async report email:", err);
-      });
-    }
+
 
     return NextResponse.json({ message: "Automated farm analysis completed successfully.", farm, prediction, vision_summary: "Multimodal agronomic analysis completed successfully." });
   } catch (err) {
