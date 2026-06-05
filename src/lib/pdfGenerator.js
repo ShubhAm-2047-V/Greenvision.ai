@@ -35,7 +35,9 @@ export async function generatePdfBuffer(prediction, farmNameOverride = null) {
 
   const writeText = (text, size, textFont, color, align = 'left') => {
     if (!text) return;
-    const lines = String(text).split('\n');
+    // Replace Rupee symbol with 'Rs.' to prevent WinAnsi encoding errors in standard fonts
+    const sanitizedText = String(text).replace(/₹/g, 'Rs.');
+    const lines = sanitizedText.split('\n');
     for (const line of lines) {
       const words = line.split(' ');
       let currentLine = '';
