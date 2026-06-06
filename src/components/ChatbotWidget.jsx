@@ -7,7 +7,7 @@ const ChatbotWidget = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Hi! I am your AgroMind AI assistant. Ask me about soil NPK, crop selection, organic composting, drip irrigation, or leaf diseases!' }
+    { sender: 'bot', text: 'Hi! I am your Agrovision AI assistant. Ask me about soil NPK, crop selection, organic composting, drip irrigation, or leaf diseases!' }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ const ChatbotWidget = () => {
         <button
           onClick={() => setIsOpen(true)}
           className="bg-primary hover:bg-primary-dark text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all scale-100 hover:scale-110 duration-200 border border-primary/20"
-          title="Open AgroMind Chatbot"
+          title="Open Agrovision Chatbot"
         >
           <MessageSquare className="w-6 h-6 animate-pulse" />
         </button>
@@ -64,7 +64,7 @@ const ChatbotWidget = () => {
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <div>
-                <h4 className="font-bold text-sm">AgroMind Assistant</h4>
+                <h4 className="font-bold text-sm">Agrovision Assistant</h4>
                 <span className="text-[10px] text-white/80">Active AI Agronomist</span>
               </div>
             </div>

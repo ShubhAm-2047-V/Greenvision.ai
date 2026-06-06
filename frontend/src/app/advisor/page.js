@@ -253,7 +253,7 @@ const AdvisorPage = () => {
                 <Icon name="bot" className="w-10 h-10 stroke-1" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-700 dark:text-slate-300">Welcome to AgroMind Advisor</h3>
+                <h3 className="font-bold text-slate-700 dark:text-slate-300">Welcome to Agrovision Advisor</h3>
                 <p className="text-xs text-slate-500 leading-relaxed mt-1">
                   How can I help you today? You can select a quick question below, write your query, or click the microphone to speak.
                 </p>

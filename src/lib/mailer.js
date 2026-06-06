@@ -15,11 +15,11 @@ export const sendReportEmail = async (toEmail, farm, prediction) => {
     return;
   }
 
-  const subject = `AgroMind AI: Farm Analysis Report for ${farm.name}`;
+  const subject = `Agrovision AI: Farm Analysis Report for ${farm.name}`;
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-      <h2 style="color: #10b981; text-align: center;">AgroMind AI Report</h2>
+      <h2 style="color: #10b981; text-align: center;">Agrovision AI Report</h2>
       <p>Hello,</p>
       <p>Your automated farm analysis for <strong>${farm.name}</strong> is ready. Here is a summary of the AI's findings:</p>
       
@@ -42,7 +42,7 @@ export const sendReportEmail = async (toEmail, farm, prediction) => {
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
       <p style="font-size: 12px; color: #888; text-align: center;">
-        This is an automated message from AgroMind AI. Please do not reply to this email.
+        This is an automated message from Agrovision AI. Please do not reply to this email.
       </p>
     </div>
   `;
@@ -52,13 +52,13 @@ export const sendReportEmail = async (toEmail, farm, prediction) => {
     const pdfBufferNode = Buffer.from(pdfBuffer); // Ensure it's a Node Buffer for nodemailer
 
     const info = await transporter.sendMail({
-      from: `"AgroMind AI" <${process.env.SMTP_USER}>`,
+      from: `"Agrovision AI" <${process.env.SMTP_USER}>`,
       to: toEmail,
       subject: subject,
       html: htmlContent,
       attachments: [
         {
-          filename: `AgroMind_Report_${farm.name.replace(/\s+/g, '_')}.pdf`,
+          filename: `Agrovision_Report_${farm.name.replace(/\s+/g, '_')}.pdf`,
           content: pdfBufferNode,
           contentType: 'application/pdf',
         },

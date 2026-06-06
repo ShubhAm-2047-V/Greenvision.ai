@@ -1,6 +1,6 @@
-# AgroMind AI Production Deployment Guide
+# Agrovision AI Production Deployment Guide
 
-This document describes how to deploy the AgroMind AI system using Docker Containers or direct process managers in a production environment.
+This document describes how to deploy the Agrovision AI system using Docker Containers or direct process managers in a production environment.
 
 ## 1. Containerized Deployment (Recommended)
 
@@ -41,14 +41,14 @@ Docker Compose sets up a MySQL database, builds the python Flask backend contain
    ```
 2. Wrap the service in a process manager like **systemd** or **Supervisor** to ensure it auto-restarts on system reboots:
    ```ini
-   # Example supervisor configuration (/etc/supervisor/conf.d/agromind.conf)
-   [program:agromind_backend]
+   # Example supervisor configuration (/etc/supervisor/conf.d/agrovision.conf)
+   [program:agrovision_backend]
    command=/workspace/backend/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 backend.run:app
    directory=/workspace
    autostart=true
    autorestart=true
-   stderr_logfile=/var/log/agromind.err.log
-   stdout_logfile=/var/log/agromind.out.log
+   stderr_logfile=/var/log/agrovision.err.log
+   stdout_logfile=/var/log/agrovision.out.log
    ```
 
 ### Frontend (Static Web Hosting)
@@ -65,7 +65,7 @@ Docker Compose sets up a MySQL database, builds the python Flask backend contain
    ```nginx
    server {
        listen 80;
-       server_name agromind.com;
+       server_name agrovision.com;
 
        location / {
            root /usr/share/nginx/html;

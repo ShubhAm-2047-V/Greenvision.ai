@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="AgroMind_Report_${id}.pdf"`,
+        'Content-Disposition': `inline; filename="Agrovision_Report_${id}.pdf"`,
       },
     });
   } catch (err) {

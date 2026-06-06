@@ -50,7 +50,7 @@ const RegisterPage = () => {
           <div style={{ width: '40px', height: '40px', background: 'var(--primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: 'var(--shadow-out)' }}>
             <Icon name="sprout" />
           </div>
-          <span style={{ fontWeight: 'bold', fontSize: '18px', color: 'var(--primary-dark)' }}>AgroMind AI</span>
+          <span style={{ fontWeight: 'bold', fontSize: '18px', color: 'var(--primary-dark)' }}>Agrovision AI</span>
         </div>
 
         <div>

@@ -380,7 +380,7 @@ const PredictPage = () => {
               <Icon name="refresh-cw" className="w-16 h-16 text-primary animate-spin stroke-1" />
               <Icon name="sprout" className="w-6 h-6 text-primary absolute" />
             </div>
-            <h3 className="font-bold text-lg text-slate-800 dark:text-white">AgroMind AI Engine Processing...</h3>
+            <h3 className="font-bold text-lg text-slate-800 dark:text-white">Agrovision AI Engine Processing...</h3>
             <p className="text-xs text-slate-400 font-mono animate-pulse">{loadingMsg}</p>
           </motion.div>
         )}

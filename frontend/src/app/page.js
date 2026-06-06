@@ -66,7 +66,7 @@ export default function LandingPage() {
           </h1>
 
           <p style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '520px', lineHeight: 1.7, margin: 0 }}>
-            Upload farm photographs, allow GPS access, and let AgroMind AI automatically analyze soil, weather, and crop conditions — <strong style={{ color: '#059669' }}>no manual data entry required.</strong>
+            Upload farm photographs, allow GPS access, and let Agrovision AI automatically analyze soil, weather, and crop conditions — <strong style={{ color: '#059669' }}>no manual data entry required.</strong>
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>

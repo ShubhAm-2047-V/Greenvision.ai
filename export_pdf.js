@@ -19,14 +19,14 @@ const path = require('path');
     
     console.log("Generating high-quality PDF...");
     await page.pdf({
-      path: 'AgroMind_Explanation_Guide.pdf',
+      path: 'Agrovision_Explanation_Guide.pdf',
       format: 'A4',
       printBackground: true, // Crucial to keep the Warm White theme colors
       margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' }
     });
     
     await browser.close();
-    console.log("PDF Exported Successfully: AgroMind_Explanation_Guide.pdf");
+    console.log("PDF Exported Successfully: Agrovision_Explanation_Guide.pdf");
   } catch (error) {
     console.error("Error generating PDF:", error);
   }

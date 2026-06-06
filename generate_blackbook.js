@@ -4,11 +4,11 @@ const path = require('path');
 
 (async () => {
   try {
-    const mdPath = 'C:\\\\Users\\\\SHUBHAM\\\\.gemini\\\\antigravity-ide\\\\brain\\\\05890d92-be88-45e1-ab2d-932418e0d5e9\\\\AgroMind_Black_Book.md';
+    const mdPath = 'C:\\\\Users\\\\SHUBHAM\\\\.gemini\\\\antigravity-ide\\\\brain\\\\05890d92-be88-45e1-ab2d-932418e0d5e9\\\\Agrovision_Black_Book.md';
     let mdContent = fs.readFileSync(mdPath, 'utf8');
     
     // Inject the logo before 'A PROJECT REPORT'
-    const logoHtml = '<div style="text-align: center; margin-bottom: 20px;">\\n    <img src="file:///E:/AgroMind%20AI/small/logo.jpeg" alt="College Logo" style="width: 150px; height: auto; margin: 0 auto; display: block;">\\n</div>\\n\\n';
+    const logoHtml = '<div style="text-align: center; margin-bottom: 20px;">\\n    <img src="file:///E:/Agrovision%20AI/small/logo.jpeg" alt="College Logo" style="width: 150px; height: auto; margin: 0 auto; display: block;">\\n</div>\\n\\n';
     mdContent = mdContent.replace('## A PROJECT REPORT', logoHtml + '## A PROJECT REPORT');
     mdContent = mdContent.replace('# CERTIFICATE', logoHtml + '# CERTIFICATE');
     
@@ -46,7 +46,7 @@ const path = require('path');
     
     console.log("Generating high-quality PDF...");
     await page.pdf({
-      path: 'AgroMind_Black_Book.pdf',
+      path: 'Agrovision_Black_Book.pdf',
       format: 'A4',
       printBackground: true, 
       margin: { top: '25mm', right: '25mm', bottom: '25mm', left: '25mm' }
@@ -55,7 +55,7 @@ const path = require('path');
     await browser.close();
     fs.unlinkSync('Temp_BlackBook.html');
     
-    console.log("PDF Exported Successfully: AgroMind_Black_Book.pdf");
+    console.log("PDF Exported Successfully: Agrovision_Black_Book.pdf");
   } catch (error) {
     console.error("Error generating PDF:", error);
   }

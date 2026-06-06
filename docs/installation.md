@@ -1,6 +1,6 @@
-# AgroMind AI Installation Guide
+# Agrovision AI Installation Guide
 
-Follow these steps to set up the AgroMind AI system on a local development machine.
+Follow these steps to set up the Agrovision AI system on a local development machine.
 
 ## Prerequisites
 - **Python**: version 3.8 to 3.11.

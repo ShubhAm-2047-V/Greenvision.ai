@@ -17,7 +17,7 @@ pptx.defineSlideMaster({
     // Top Emerald Green Accent Bar
     { rect: { x: 0, y: 0, w: '100%', h: 0.15, fill: { color: primaryColor } } },
     // Bottom Footer Text
-    { text: { text: 'AgroMind AI Project Presentation - Diploma Final Year', options: { x: 0.5, y: '93%', w: '90%', fontSize: 10, color: textMuted, fontFace: 'Arial' } } }
+    { text: { text: 'Agrovision AI Project Presentation - Diploma Final Year', options: { x: 0.5, y: '93%', w: '90%', fontSize: 10, color: textMuted, fontFace: 'Arial' } } }
   ]
 });
 
@@ -52,7 +52,7 @@ addSlide('1. The Problem Statement', [
 ]);
 
 // 3. The Solution
-addSlide('2. The Solution: AgroMind AI', [
+addSlide('2. The Solution: Agrovision AI', [
   'A cloud-based, multimodal AI platform acting as a hyper-intelligent virtual agronomist.',
   'Requires zero manual data entry: farmers only need a smartphone camera and GPS location.',
   'Generates exhaustive crop, soil, and financial analysis in under 30 seconds.',
@@ -114,14 +114,14 @@ addSlide('8. Key Engineering Achievements', [
 
 // 10. Conclusion & Future Scope
 addSlide('9. Conclusion & Future Scope', [
-  'Conclusion: AgroMind AI successfully proves that high-end agricultural intelligence can be accessible.',
+  'Conclusion: Agrovision AI successfully proves that high-end agricultural intelligence can be accessible.',
   'Future Scope 1: Integration with physical IoT soil moisture sensors for live telemetry.',
   'Future Scope 2: Multilingual voice-to-text interface (Hindi, Marathi) for rural accessibility.',
   'Future Scope 3: Satellite imagery (NDVI) integration for macro-scale farm analysis.'
 ]);
 
 // Generate the file
-pptx.writeFile({ fileName: 'AgroMind_AI_Presentation.pptx' })
+pptx.writeFile({ fileName: 'Agrovision_AI_Presentation.pptx' })
   .then(fileName => {
       console.log(`Successfully created PPTX file: ${fileName}`);
   })

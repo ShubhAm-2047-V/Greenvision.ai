@@ -1,6 +1,6 @@
-# AgroMind AI - Precision Agriculture Intelligence Platform
+# Agrovision AI - Precision Agriculture Intelligence Platform
 
-AgroMind AI is a production-ready, AI-powered smart agriculture platform designed to support farmers with real-time agronomic insights. By uploading a single farm image, the system automatically fetches geographic metadata, weather forecasts, and soil properties to compile personalized crop suitability rankings, fertilizer schedules, watering charts, and leaf disease diagnostic reports.
+Agrovision AI is a production-ready, AI-powered smart agriculture platform designed to support farmers with real-time agronomic insights. By uploading a single farm image, the system automatically fetches geographic metadata, weather forecasts, and soil properties to compile personalized crop suitability rankings, fertilizer schedules, watering charts, and leaf disease diagnostic reports.
 
 The system is entirely API-driven and powered by **Google Gemini 2.5 Pro**, **Gemini Vision**, **Open-Meteo**, **OpenStreetMap Nominatim**, and **SoilGrids (ISRIC)**.
 
@@ -20,7 +20,7 @@ The system is entirely API-driven and powered by **Google Gemini 2.5 Pro**, **Ge
 ## Directory Architecture
 
 ```text
-AgroMind AI/
+Agrovision AI/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
@@ -67,7 +67,7 @@ AgroMind AI/
 ### Prerequisite: Supabase Database Setup
 
 1. Create a free project at [Supabase](https://supabase.com).
-2. Go to the **SQL Editor** in your Supabase dashboard and execute the contents of [database/supabase_schema.sql](file:///e:/AgroMind%20AI/database/supabase_schema.sql). This will create all necessary tables, triggers, and Row-Level Security (RLS) policies.
+2. Go to the **SQL Editor** in your Supabase dashboard and execute the contents of [database/supabase_schema.sql](file:///e:/Agrovision%20AI/database/supabase_schema.sql). This will create all necessary tables, triggers, and Row-Level Security (RLS) policies.
 3. In the **Storage** dashboard, create the following three public buckets:
    * `farm-images`
    * `leaf-images`

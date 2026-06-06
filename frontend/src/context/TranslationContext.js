@@ -6,7 +6,7 @@ const TranslationContext = createContext({});
 
 const translations = {
   "en": {
-    "brand": "AgroMind AI",
+    "brand": "Agrovision AI",
     "tagline": "AI-Powered Smart Farming Intelligence Platform",
     "dashboard": "Dashboard",
     "predict": "Predict Crop",
@@ -43,7 +43,7 @@ const translations = {
     "chatbot_placeholder": "Ask me anything about farming..."
   },
   "hi": {
-    "brand": "एग्रोमाइंड AI",
+    "brand": "एग्रोविजन AI",
     "tagline": "एआई-संचालित स्मार्ट खेती सूचना प्रणाली",
     "dashboard": "डैशबोर्ड",
     "predict": "फसल भविष्यवाणी",
@@ -80,7 +80,7 @@ const translations = {
     "chatbot_placeholder": "मुझसे खेती के बारे में कुछ भी पूछें..."
   },
   "mr": {
-    "brand": "एग्रोमाइंड AI",
+    "brand": "एग्रोविजन AI",
     "tagline": "एआय-संचलित स्मार्ट शेती माहिती प्रणाली",
     "dashboard": "डॅशबोर्ड",
     "predict": "पीक अंदाज",
@@ -117,7 +117,7 @@ const translations = {
     "chatbot_placeholder": "मला शेतीबद्दल काहीही विचारा..."
   },
   "kn": {
-    "brand": "ಅಗ್ರೋಮೈಂಡ್ AI",
+    "brand": "ಅಗ್ರೋವಿಷನ್ AI",
     "tagline": "AI-ಚಾಲಿತ ಸ್ಮಾರ್ಟ್ ಫಾರ್ಮಿಂಗ್ ಇಂಟೆಲಿಜೆನ್ಸ್ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್",
     "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
     "predict": "ಬೆಳೆಯನ್ನು ಊಹಿಸಿ",
@@ -191,7 +191,7 @@ const translations = {
     "chatbot_placeholder": "వ్యవసాయం గురించి ఏమైనా అడగండి..."
   },
   "gu": {
-    "brand": "AgroMind AI",
+    "brand": "Agrovision AI",
     "tagline": "AI-સંચાલિત સ્માર્ટ ફાર્મિંગ ઇન્ટેલિજન્સ પ્લેટફોર્મ",
     "dashboard": "ડેશબોર્ડ",
     "predict": "પાકની આગાહી કરો",

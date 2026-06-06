@@ -22,7 +22,7 @@ export default function PresentationSlider() {
       ]
     },
     {
-      title: "2. The Solution: AgroMind AI",
+      title: "2. The Solution: Agrovision AI",
       content: [
         "A cloud-based, multimodal AI platform acting as a hyper-intelligent virtual agronomist.",
         "Requires zero manual data entry: farmers only need a smartphone camera and GPS location.",
@@ -92,7 +92,7 @@ export default function PresentationSlider() {
     {
       title: "9. Conclusion & Future Scope",
       content: [
-        "Conclusion: AgroMind AI successfully proves that high-end agricultural intelligence can be accessible.",
+        "Conclusion: Agrovision AI successfully proves that high-end agricultural intelligence can be accessible.",
         "Future Scope 1: Integration with physical IoT soil moisture sensors for live telemetry.",
         "Future Scope 2: Multilingual voice-to-text interface (Hindi, Marathi) for rural accessibility.",
         "Future Scope 3: Satellite imagery (NDVI) integration for macro-scale farm analysis."
@@ -119,7 +119,7 @@ export default function PresentationSlider() {
         <Link href="/" style={{ color: '#10b981', textDecoration: 'none', fontWeight: 'bold', fontSize: '18px' }}>
           ← Back to Website
         </Link>
-        <span style={{ color: '#4b5563', fontSize: '14px' }}>AgroMind AI Project Presentation</span>
+        <span style={{ color: '#4b5563', fontSize: '14px' }}>Agrovision AI Project Presentation</span>
       </div>
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>

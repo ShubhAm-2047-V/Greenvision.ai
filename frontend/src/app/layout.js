@@ -9,7 +9,7 @@ import './tailwind-built.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'AgroMind AI - Smart Farming Platform',
+  title: 'Agrovision AI - Smart Farming Platform',
   description: 'AI-Powered Smart Farming Intelligence Platform recommending crops, diagnostic plant diseases, and optimizing irrigation.',
 };
 

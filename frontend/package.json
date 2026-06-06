@@ -1,7 +1,7 @@
 {
-  "name": "agromind-frontend",
+  "name": "agrovision-frontend",
   "version": "1.0.0",
-  "description": "Next.js frontend for AgroMind AI smart farming platform",
+  "description": "Next.js frontend for Agrovision AI smart farming platform",
   "private": true,
   "scripts": {
     "dev": "next dev",
