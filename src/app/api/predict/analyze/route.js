@@ -151,8 +151,8 @@ export async function POST(request) {
         "crop": "String (Main recommended crop name)",
         "confidence": Number (0-100),
         "expected_yield": "String (e.g., 30 Tons/Hectare)",
-        "expected_revenue": "String (e.g., $5000)",
-        "expected_profit": "String (e.g., $3000)",
+        "expected_revenue": "String (e.g., ₹ 50000 or Rs. 50000)",
+        "expected_profit": "String (e.g., ₹ 30000 or Rs. 30000)",
         "explanation": "String (A comprehensive, easily readable paragraph summarizing the soil condition, weather, visual findings, fertilizer plan, irrigation plan, and why this crop is recommended. Format it as plain text without any JSON or arrays.)",
         "farm_health_score": Number (0-100),
         "soil_health_score": Number (0-100)
@@ -196,7 +196,7 @@ export async function POST(request) {
 
     if (!resultJson.crop) {
       // simplified fallback for brevity
-      resultJson = { crop: "Rice", farm_health_score: 75, expected_yield: "2.5 tons/acre", expected_revenue: "INR 55,000", expected_profit: "INR 32,000", explanation: "Fallback response." };
+      resultJson = { crop: "Rice", farm_health_score: 75, expected_yield: "2.5 tons/acre", expected_revenue: "Rs. 55,000", expected_profit: "Rs. 32,000", explanation: "Fallback response." };
     }
 
     const { data: prediction, error: predError } = await supabaseAdmin.from('predictions').insert({
