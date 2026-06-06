@@ -11,7 +11,7 @@ const path = require('path');
     const page = await browser.newPage();
     
     // Resolve absolute path for Windows
-    const filePath = `file:///${path.resolve('AgroMind_Report.html').replace(/\\/g, '/')}`;
+    const filePath = `file:///${path.resolve('Agrovision_Report.html').replace(/\\/g, '/')}`;
     
     console.log(`Loading HTML file: ${filePath}`);
     // Wait until networkidle0
@@ -19,14 +19,14 @@ const path = require('path');
     
     console.log("Generating high-quality PDF...");
     await page.pdf({
-      path: 'AgroMind_Mini_Project_Report.pdf',
+      path: 'Agrovision_Mini_Project_Report.pdf',
       format: 'A4',
       printBackground: true, 
       margin: { top: '25mm', right: '25mm', bottom: '25mm', left: '25mm' }
     });
     
     await browser.close();
-    console.log("PDF Exported Successfully: AgroMind_Mini_Project_Report.pdf");
+    console.log("PDF Exported Successfully: Agrovision_Mini_Project_Report.pdf");
   } catch (error) {
     console.error("Error generating PDF:", error);
   }

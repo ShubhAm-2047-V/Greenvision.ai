@@ -12,7 +12,7 @@ async function getGeocoding(lat, lon) {
   let country = 'India', state = 'Maharashtra', district = 'Pune', village = 'Smart Village';
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-    const res = await axios.get(url, { headers: { 'User-Agent': 'AgroMindAI-Client' }, timeout: 800 });
+    const res = await axios.get(url, { headers: { 'User-Agent': 'AgrovisionAI-Client' }, timeout: 800 });
     if (res.data && res.data.address) {
       const addr = res.data.address;
       country = addr.country || country;
@@ -127,7 +127,7 @@ export async function POST(request) {
     }
 
     const prompt = `
-      You are AgroMind AI, an expert agricultural intelligence system.
+      You are Agrovision AI, an expert agricultural intelligence system.
       
       CRITICAL INSTRUCTION: Analyze the provided image(s). First, determine if the image is relevant to agriculture (e.g., a farm, crops, soil, plants, or leaves). 
       If the image is completely unrelated to agriculture (e.g., a person, an animal, a car, a random object), you MUST respond ONLY with this exact JSON:

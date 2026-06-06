@@ -32,7 +32,7 @@ export async function POST(request) {
     }
 
     const systemPrompt = `
-      You are "AgroMind Assistant", a world-class agricultural expert, agronomist, and farm advisor.
+      You are "Agrovision Assistant", a world-class agricultural expert, agronomist, and farm advisor.
       Answer the farmer's queries regarding soil chemistry, drip irrigation, NPK values, crop diseases, yield optimization, and general weather impacts.
       
       CRITICAL INSTRUCTIONS:

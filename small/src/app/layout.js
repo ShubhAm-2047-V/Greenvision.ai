@@ -8,7 +8,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'AgroMind AI Mini',
+  title: 'Agrovision AI Mini',
   description: 'AI-Powered Smart Farming Intelligence Platform recommending crops and providing chat advice.',
 };
 

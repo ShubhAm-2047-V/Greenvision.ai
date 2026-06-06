@@ -39,7 +39,7 @@ const PredictPage = () => {
   const fileInputRefCamera = useRef(null);
 
   React.useEffect(() => {
-    const saved = localStorage.getItem('agromind_coords');
+    const saved = localStorage.getItem('agrovision_coords');
     if (saved) {
       try {
         setCoords(JSON.parse(saved));
@@ -94,7 +94,7 @@ const PredictPage = () => {
           const lon = position.coords.longitude;
           const newCoords = { lat, lon };
           setCoords(newCoords);
-          localStorage.setItem('agromind_coords', JSON.stringify(newCoords));
+          localStorage.setItem('agrovision_coords', JSON.stringify(newCoords));
           setLocationSuccess(true);
           setLocLoading(false);
         },

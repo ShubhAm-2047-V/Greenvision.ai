@@ -21,7 +21,7 @@ const Navbar = () => {
     <nav className="sk-nav">
       <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'var(--primary-dark)', fontWeight: 'bold', fontSize: '20px' }}>
         <Icon name="sprout" style={{ width: '28px', height: '28px', color: 'var(--primary)' }} />
-        <span>AgroMind Mini</span>
+        <span>Agrovision Mini</span>
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

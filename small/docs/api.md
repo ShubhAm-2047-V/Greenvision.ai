@@ -1,4 +1,4 @@
-# AgroMind AI REST API Reference Documentation
+# Agrovision AI REST API Reference Documentation
 
 All endpoints receive and return JSON unless noted otherwise.
 

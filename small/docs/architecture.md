@@ -1,6 +1,6 @@
-# AgroMind AI System Architecture & Future-Ready Design
+# Agrovision AI System Architecture & Future-Ready Design
 
-This document details the software architecture, data flows, and design decisions behind AgroMind AI, emphasizing its readiness for enterprise scale and IoT integration.
+This document details the software architecture, data flows, and design decisions behind Agrovision AI, emphasizing its readiness for enterprise scale and IoT integration.
 
 ---
 
@@ -27,7 +27,7 @@ graph TD
 
 ## 3. Future-Ready Architecture (IoT, Blockchain, Satellites)
 
-The AgroMind system has been structured to easily support integration of high-level agricultural modules:
+The Agrovision system has been structured to easily support integration of high-level agricultural modules:
 
 ### 1. IoT Sensor Integration & Smart Devices
 * **Design Ready**: The `SoilData` and `WeatherData` schemas allow capturing continuous time-series parameters.
@@ -46,7 +46,7 @@ The AgroMind system has been structured to easily support integration of high-le
 * **Drone Scanning**: Farmers can execute automated drone flight paths over fields, upload orthomosaics, crop individual leaves, and batch-upload them to `/api/disease/detect` to map disease spread across acres.
 
 ### 4. Blockchain Crop Traceability
-* **Traceability**: Harvested crops can be minted with decentralized identifiers (DIDs). Every ML soil certificate, fertilizer report, and disease scan logged on AgroMind can be compiled into a cryptographic metadata hash and written to an Ethereum or Hyperledger block, ensuring crop history transparency.
+* **Traceability**: Harvested crops can be minted with decentralized identifiers (DIDs). Every ML soil certificate, fertilizer report, and disease scan logged on Agrovision can be compiled into a cryptographic metadata hash and written to an Ethereum or Hyperledger block, ensuring crop history transparency.
 
 ### 5. Edge AI Deployment
 * **Edge Inference**: The trained `best_model.joblib` can be compiled into an ONNX or TensorFlow Lite model and deployed locally onto Raspberry Pi or ESP32 microcontrollers in remote fields, allowing offline inference and local irrigation decisions.

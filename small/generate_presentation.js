@@ -8,7 +8,7 @@ async function generateProjectReport() {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  // Theme Colors (Warm White Theme to match AgroMind AI website)
+  // Theme Colors (Warm White Theme to match Agrovision AI website)
   const bgColor = rgb(250/255, 248/255, 245/255); // #faf8f5 Warm White background
   const primaryColor = rgb(16/255, 185/255, 129/255); // #10b981 Emerald Green accent
   const textDark = rgb(31/255, 41/255, 55/255); // #1f2937 Dark text for readability
@@ -87,7 +87,7 @@ async function generateProjectReport() {
 
   // COVER PAGE
   y -= 200;
-  writeText('AgroMind AI', 36, boldFont, primaryColor, 'center');
+  writeText('Agrovision AI', 36, boldFont, primaryColor, 'center');
   y -= 15;
   writeText('Project Architecture & Documentation Report', 18, boldFont, textDark, 'center');
   y -= 30;
@@ -97,7 +97,7 @@ async function generateProjectReport() {
 
   // CONTENT
   addSection('1. Project Overview', 
-    'AgroMind AI is a state-of-the-art multimodal agricultural intelligence platform designed to empower farmers and agronomists with precision data. By leveraging advanced artificial intelligence, geolocation, and environmental APIs, the platform conducts comprehensive visual and data-driven analysis of farms to provide highly accurate crop recommendations, yield forecasts, and soil health diagnostics.'
+    'Agrovision AI is a state-of-the-art multimodal agricultural intelligence platform designed to empower farmers and agronomists with precision data. By leveraging advanced artificial intelligence, geolocation, and environmental APIs, the platform conducts comprehensive visual and data-driven analysis of farms to provide highly accurate crop recommendations, yield forecasts, and soil health diagnostics.'
   );
 
   addBulletPoints('2. Core Features', [
@@ -140,7 +140,7 @@ async function generateProjectReport() {
   );
 
   addSection('7. Conclusion', 
-    'AgroMind AI demonstrates the powerful intersection of generative artificial intelligence and precision agriculture. By synthesizing visual data with localized environmental APIs, the platform democratizes access to expert-level agronomic intelligence, paving the way for optimized yields and sustainable farming practices.'
+    'Agrovision AI demonstrates the powerful intersection of generative artificial intelligence and precision agriculture. By synthesizing visual data with localized environmental APIs, the platform democratizes access to expert-level agronomic intelligence, paving the way for optimized yields and sustainable farming practices.'
   );
 
   // Footer
@@ -150,8 +150,8 @@ async function generateProjectReport() {
 
   // Save PDF
   const pdfBytes = await pdfDoc.save();
-  fs.writeFileSync('AgroMind_Project_Report.pdf', pdfBytes);
-  console.log('Project report generated successfully at AgroMind_Project_Report.pdf');
+  fs.writeFileSync('Agrovision_Project_Report.pdf', pdfBytes);
+  console.log('Project report generated successfully at Agrovision_Project_Report.pdf');
 }
 
 generateProjectReport().catch(console.error);
